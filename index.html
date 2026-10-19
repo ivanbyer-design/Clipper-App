@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clipper</title>
+<meta name="description" content="Clipper — manage your clipping workflow: accounts, campaigns, clips, captions, posting and performance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f12;--panel:#15181d;--panel2:#1c2027;--line:#2a2f38;--text:#e8eaed;--muted:#8b93a1;
+  --accent:#c6ff3d;--accent-ink:#0d0f12;--accent-soft:rgba(198,255,61,.12);
+  --warn:#ffb648;--bad:#ff6b6b;--good:#3ddc97;--radius:12px;
+  --shadow:0 10px 40px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f3f4f0;--panel:#ffffff;--panel2:#eef0ea;--line:#dcdfd6;--text:#15171b;--muted:#5d6470;
+  --accent:#4f7300;--accent-ink:#ffffff;--accent-soft:rgba(79,115,0,.10);--warn:#a86400;--bad:#c62828;--good:#16804f;
+  --shadow:0 10px 40px rgba(0,0,0,.12);}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{min-height:100vh;overflow-x:hidden}
+a{color:var(--accent)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;margin:0;letter-spacing:-.01em}
+h2{font-size:22px}
+h3{font-size:16px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top{max-width:1200px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-family:"Space Grotesk";font-weight:700;font-size:20px}
+.logo .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:15px}
+.top .spacer{flex:1}
+.tabs{max-width:1200px;margin:0 auto;display:flex;gap:4px;padding:8px 16px 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;color:var(--muted);font:600 14px Inter;padding:9px 12px 11px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);border-bottom-color:var(--accent)}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 80px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.stack>*+*{margin-top:14px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0}
+.tile .k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.tile .v{font-family:"Space Grotesk";font-size:28px;font-weight:700;margin-top:4px}
+.tile .s{font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font:600 13px Inter;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.btn.ghost{background:none;border-color:transparent}
+.chip{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.chip.a{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.chip.w{color:var(--warn)} .chip.b{color:var(--bad)} .chip.g{color:var(--good)}
+.chip.click{cursor:pointer}
+.chip.click.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bar{height:7px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.todo{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
+.todo:first-child{border-top:0}
+.todo .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none;background:var(--accent)}
+.todo .dot.w{background:var(--warn)} .todo .dot.b{background:var(--bad)}
+.empty{padding:26px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--radius)}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:14px Inter}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fields .full{grid-column:1/-1}
+.checks{display:flex;flex-direction:column;gap:6px}
+.checks label{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.checks input{width:auto;accent-color:var(--accent)}
+.section-t{font-family:"Space Grotesk";font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);grid-column:1/-1;margin-top:6px;border-top:1px solid var(--line);padding-top:12px}
+/* board */
+.board{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.col{flex:0 0 250px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px}
+.col h3{font-size:14px;display:flex;justify-content:space-between;padding:2px 4px 10px}
+.kc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer}
+.kc:hover{border-color:var(--muted)}
+.kc .t{font-weight:600;font-size:14px;margin-bottom:4px;word-break:break-word}
+.kc .m{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.kc .mv{display:flex;justify-content:space-between;margin-top:8px}
+/* table */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;user-select:none}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;justify-content:center;align-items:flex-start;padding:30px 12px;overflow-y:auto}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:100%;max-width:760px;box-shadow:var(--shadow)}
+.modal .hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.modal .bd{padding:18px}
+.modal .ft{display:flex;gap:8px;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.step{display:flex;gap:14px}
+.step .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:"Space Grotesk";font-weight:700}
+.step ul{margin:6px 0 0;padding-left:18px;color:var(--muted)}
+.step li{margin:3px 0}
+.hbar{display:grid;grid-template-columns:minmax(70px,1fr) minmax(40px,1.2fr) auto;gap:10px;align-items:center;font-size:14px;padding:5px 0}
+.hbar .bar{height:10px}
+@media (max-width:600px){
+  .tile .v{font-size:22px}
+  .top .hide-m{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo"><span class="mark">✂</span>Clipper</div>
+    <div class="spacer"></div>
+    <span class="muted small hide-m" id="todayLbl"></span>
+    <button class="btn primary sm" onclick="editClip()">+ Clip</button>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main id="view"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- constants ---------- */
+const LS_KEY='clipper.v1';
+const VIEWS=[['dash','Dashboard'],['pipe','Pipeline'],['camps','Campaigns'],['accts','Accounts'],['caps','Captions'],['review','Review'],['play','Playbook'],['settings','Settings']];
+const STAGES=['Idea','Editing','Ready','Posted','Submitted','Approved','Paid','Rejected'];
+const PLATFORMS=['TikTok','YouTube Shorts','Instagram Reels'];
+const HOOKS=['Money claim','Hot take','Story','Funny','Question','Shock stat','Reaction','Other'];
+const MARKETS=['Whop Content Rewards','Duzlo','Other'];
+const CAMP_STATUS=['Scouting','Active','Paused','Ended'];
+const ACCT_STATUS=['Warming up','Active','Paused','Flagged'];
+const EDIT_CHECKS=['9:16, framed on speaker','Hook text in first frame','Dead air & filler cut','Captions burned in','Zoom punch-ins on key lines','Own layer added (title / context / voiceover)','Required tags & mentions added','Watched full clip on phone'];
+const WARMUP=['Profile pic, name & bio set','Day 1 — scroll & engage niche','Day 2 — scroll & engage niche','Day 3 — scroll & engage niche','Day 4 — scroll & engage niche','Day 5 — first post'];
+const CAMP_CHECKS=['Read the full brief','Source has strong moments','My platforms are allowed'];
+
+/* ---------- state ---------- */
+const defaults=()=>({settings:{dailyTarget:3,feePct:10,niche:'Trading / finance',hashtagBank:'#trading #daytrading #futures #stockmarket #money #finance #investing'},accounts:[],campaigns:[],clips:[]});
+let S=load();
+let VIEW='dash';
+try{VIEW=localStorage.getItem(LS_KEY+'.view')||'dash'}catch(e){}
+let pipeFilter='';
+let reviewSort={k:'views7',d:-1};
+let capState={clipId:'',transcript:'',tags:[]};
+
+function load(){
+  try{const r=localStorage.getItem(LS_KEY);if(r){const d=JSON.parse(r);const base=defaults();return{...base,...d,settings:{...base.settings,...(d.settings||{})}}}}catch(e){}
+  return defaults();
+}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){toast('Could not save — export a backup in Settings')}}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const daysAgo=iso=>{if(!iso)return null;const a=new Date(iso+'T00:00:00'),b=new Date(today()+'T00:00:00');return Math.round((b-a)/864e5)};
+const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n};
+const fmtN=n=>n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M':n>=1e3?(n/1e3).toFixed(n>=1e4?0:1)+'K':String(Math.round(n));
+const fmt$=n=>'$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:n<100?2:0,maximumFractionDigits:2});
+const camp=id=>S.campaigns.find(c=>c.id===id);
+const views=c=>num(c.views7)||num(c.views48);
+function est(c){
+  if(num(c.paid))return num(c.paid);
+  if(c.stage==='Rejected')return 0;
+  const k=camp(c.campaignId);if(!k||!num(k.cpm))return 0;
+  const v=views(c);if(num(k.minViews)&&v<num(k.minViews))return 0;
+  let g=v/1000*num(k.cpm);if(num(k.maxPerClip))g=Math.min(g,num(k.maxPerClip));
+  return g*(1-num(S.settings.feePct)/100);
+}
+function campScore(k){
+  let s=0;const checks=k.checks||[];
+  if(num(k.cpm)>=1)s++;
+  if(k.budgetLeft===''||k.budgetLeft==null||num(k.budgetLeft)>=30)s++;
+  s+=CAMP_CHECKS.filter(x=>checks.includes(x)).length;
+  return s; // out of 5
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800)}
+async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied')}catch(_){toast('Copy failed')}ta.remove()}}
+
+/* ---------- nav ---------- */
+function nav(v){VIEW=v;try{localStorage.setItem(LS_KEY+'.view',v)}catch(e){}render();window.scrollTo(0,0)}
+function renderTabs(){document.getElementById('tabs').innerHTML=VIEWS.map(([k,l])=>`<button class="tab ${k===VIEW?'on':''}" onclick="nav('${k}')">${l}</button>`).join('')}
+function render(){
+  renderTabs();
+  document.getElementById('todayLbl').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  const r={dash:vDash,pipe:vPipe,camps:vCamps,accts:vAccts,caps:vCaps,review:vReview,play:vPlay,settings:vSettings}[VIEW]||vDash;
+  document.getElementById('view').innerHTML=r();
+  if(VIEW==='caps')capsAfter();
+}
+
+/* ---------- generic form modal ---------- */
+let FORM=null;
+function field(f,val){
+  const id='f_'+f.k;const full=f.full?' full':'';
+  if(f.type==='section')return `<div class="section-t">${esc(f.label)}</div>`;
+  let input='';
+  if(f.type==='select'){const opts=(typeof f.options==='function'?f.options():f.options);
+    input=`<select id="${id}">${opts.map(o=>{const[v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(val??'')===String(v)?'selected':''}>${esc(l)}</option>`}).join('')}</select>`}
+  else if(f.type==='textarea')input=`<textarea id="${id}" placeholder="${esc(f.ph||'')}">${esc(val)}</textarea>`;
+  else if(f.type==='multi'){const arr=val||[];input=`<div class="checks" id="${id}">${f.options.map(o=>`<label><input type="checkbox" value="${esc(o)}" ${arr.includes(o)?'checked':''}>${esc(o)}</label>`).join('')}</div>`}
+  else input=`<input id="${id}" type="${f.type||'text'}" value="${esc(val)}" placeholder="${esc(f.ph||'')}" ${f.type==='number'?'step="any" inputmode="decimal"':''}>`;
+  return `<div class="${full}${f.type==='multi'||f.type==='textarea'?' full':''}"><label class="f" for="${id}">${esc(f.label)}</label>${input}${f.hint?`<div class="muted small" style="margin-top:4px">${esc(f.hint)}</div>`:''}</div>`;
+}
+function openForm(title,fields,obj,onSave,onDelete){
+  FORM={fields,obj,onSave,onDelete};
+  const ov=document.createElement('div');ov.className='ov';ov.id='ov';
+  ov.innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="hd"><h3>${esc(title)}</h3><button class="btn ghost" onclick="closeForm()" aria-label="Close">✕</button></div>
+  <div class="bd"><div class="fields">${fields.map(f=>field(f,obj[f.k])).join('')}</div></div>
+  <div class="ft"><div>${onDelete?'<button class="btn danger" onclick="formDelete()">Delete</button>':''}</div><div class="row"><button class="btn" onclick="closeForm()">Cancel</button><button class="btn primary" onclick="formSave()">Save</button></div></div></div>`;
+  ov.addEventListener('mousedown',e=>{if(e.target===ov)closeForm()});
+  document.body.appendChild(ov);document.body.style.overflow='hidden';
+  const first=ov.querySelector('input,select,textarea');if(first)first.focus();
+}
+function closeForm(){const o=document.getElementById('ov');if(o)o.remove();document.body.style.overflow='';FORM=null}
+function formSave(){
+  const out={...FORM.obj};
+  FORM.fields.forEach(f=>{if(f.type==='section')return;const el=document.getElementById('f_'+f.k);if(!el)return;
+    if(f.type==='multi')out[f.k]=[...el.querySelectorAll('input:checked')].map(i=>i.value);
+    else out[f.k]=el.value.trim()});
+  const cb=FORM.onSave;closeForm();cb(out);save();render();toast('Saved');
+}
+function formDelete(){if(!confirm('Delete this?'))return;const cb=FORM.onDelete;closeForm();cb();save();render();toast('Deleted')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&FORM)closeForm()});
+function upsert(list,o){const i=list.findIndex(x=>x.id===o.id);if(i>=0)list[i]=o;else list.push(o)}
+
+/* ---------- clip form ---------- */
+const campOpts=()=>[['','— No campaign —'],...S.campaigns.map(c=>[c.id,c.name+(c.status==='Ended'?' (ended)':'')])];
+const CLIP_FIELDS=[
+  {type:'section',label:'Moment'},
+  {k:'title',label:'Working title',ph:'e.g. "He lost $40K on one trade"'},
+  {k:'campaignId',label:'Campaign',type:'select',options:campOpts},
+  {k:'stage',label:'Stage',type:'select',options:STAGES},
+  {k:'sourceUrl',label:'Source video link',type:'url',ph:'https://'},
+  {k:'sourceTs',label:'Timestamp in source',ph:'12:04 – 12:41'},
+  {k:'lengthSec',label:'Clip length (sec)',type:'number',ph:'35'},
+  {type:'section',label:'Hook & edit'},
+  {k:'hookType',label:'Hook type',type:'select',options:['',...HOOKS]},
+  {k:'hook',label:'On-screen hook text',ph:'First 2 seconds text'},
+  {k:'editChecks',label:'Edit checklist (CapCut)',type:'multi',options:EDIT_CHECKS},
+  {type:'section',label:'Posting'},
+  {k:'platforms',label:'Post to',type:'multi',options:PLATFORMS},
+  {k:'scheduledFor',label:'Scheduled for',type:'date'},
+  {k:'postedAt',label:'Posted on',type:'date'},
+  {k:'urlTT',label:'TikTok link',type:'url'},
+  {k:'urlYT',label:'YouTube Shorts link',type:'url'},
+  {k:'urlIG',label:'Instagram Reels link',type:'url'},
+  {k:'caption',label:'Caption + hashtags',type:'textarea'},
+  {type:'section',label:'Campaign & results'},
+  {k:'submittedAt',label:'Submitted to campaign',type:'date'},
+  {k:'views48',label:'Views at 48h (all platforms)',type:'number'},
+  {k:'views7',label:'Views at 7 days (all platforms)',type:'number'},
+  {k:'paid',label:'Actual payout ($)',type:'number',hint:'Leave blank to use the estimate from campaign rate.'},
+  {k:'notes',label:'Notes / what to learn',type:'textarea'},
+];
+function stageSideEffects(c){
+  const i=STAGES.indexOf(c.stage);
+  if(i>=STAGES.indexOf('Posted')&&c.stage!=='Rejected'&&!c.postedAt)c.postedAt=today();
+  if(i>=STAGES.indexOf('Submitted')&&c.stage!=='Rejected'&&!c.submittedAt)c.submittedAt=today();
+  return c;
+}
+function editClip(id,preset){
+  const c=id?S.clips.find(x=>x.id===id):{id:uid(),stage:'Idea',createdAt:today(),platforms:[...PLATFORMS],editChecks:[],campaignId:pipeFilter||'',...(preset||{})};
+  openForm(id?'Edit clip':'New clip',CLIP_FIELDS,c,o=>{if(!o.title)o.title=o.hook||'Untitled clip';upsert(S.clips,stageSideEffects(o))},id?()=>{S.clips=S.clips.filter(x=>x.id!==id)}:null);
+}
+function moveClip(id,dir,ev){
+  if(ev)ev.stopPropagation();
+  const c=S.clips.find(x=>x.id===id);if(!c)return;
+  const flow=STAGES.slice(0,7);let i=flow.indexOf(c.stage);
+  if(c.stage==='Rejected')i=STAGES.indexOf('Submitted');
+  i=Math.max(0,Math.min(flow.length-1,i+dir));c.stage=flow[i];stageSideEffects(c);save();render();
+}
+function rejectClip(id,ev){ev.stopPropagation();const c=S.clips.find(x=>x.id===id);c.stage='Rejected';save();render()}
+
+/* ---------- campaign & account forms ---------- */
+const CAMP_FIELDS=[
+  {k:'name',label:'Campaign name',ph:'e.g. Trading guru podcast clips'},
+  {k:'marketplace',label:'Marketplace',type:'select',options:MARKETS},
+  {k:'status',label:'Status',type:'select',options:CAMP_STATUS},
+  {k:'cpm',label:'Rate ($ per 1,000 views)',type:'number',ph:'1.00'},
+  {k:'budgetLeft',label:'Budget left (%)',type:'number',ph:'80'},
+  {k:'maxPerClip',label:'Max payout per clip ($)',type:'number'},
+  {k:'minViews',label:'Min views to earn',type:'number'},
+  {k:'platforms',label:'Platforms allowed',type:'multi',options:PLATFORMS},
+  {k:'requiredTags',label:'Required tags / mentions / links',full:true,ph:'#brandname @creator link in bio'},
+  {k:'briefUrl',label:'Campaign / brief link',type:'url'},
+  {k:'sourceUrl',label:'Source content link',type:'url'},
+  {k:'checks',label:'Before joining',type:'multi',options:CAMP_CHECKS},
+  {k:'notes',label:'Brief notes / rules',type:'textarea',ph:'Rules that get clips rejected, style asks, deadlines…'},
+];
+function editCamp(id){
+  const c=id?S.campaigns.find(x=>x.id===id):{id:uid(),marketplace:MARKETS[0],status:'Scouting',platforms:[...PLATFORMS],checks:[]};
+  openForm(id?'Edit campaign':'New campaign',CAMP_FIELDS,c,o=>{if(!o.name)o.name='Untitled campaign';upsert(S.campaigns,o)},id?()=>{S.campaigns=S.campaigns.filter(x=>x.id!==id);S.clips.forEach(k=>{if(k.campaignId===id)k.campaignId=''})}:null);
+}
+const ACCT_FIELDS=[
+  {k:'platform',label:'Platform',type:'select',options:PLATFORMS},
+  {k:'handle',label:'Handle',ph:'@yourpage'},
+  {k:'niche',label:'Niche'},
+  {k:'status',label:'Status',type:'select',options:ACCT_STATUS},
+  {k:'created',label:'Created on',type:'date'},
+  {k:'followers',label:'Followers',type:'number'},
+  {k:'warmup',label:'Warm-up checklist',type:'multi',options:WARMUP},
+  {k:'notes',label:'Notes (login email, bio text, etc. — no passwords)',type:'textarea'},
+];
+function editAcct(id){
+  const a=id?S.accounts.find(x=>x.id===id):{id:uid(),platform:PLATFORMS[0],status:'Warming up',created:today(),niche:S.settings.niche,warmup:[]};
+  openForm(id?'Edit account':'New account',ACCT_FIELDS,a,o=>{if(!o.handle)o.handle='@new';upsert(S.accounts,o)},id?()=>{S.accounts=S.accounts.filter(x=>x.id!==id)}:null);
+}
+
+/* ---------- Dashboard ---------- */
+function vDash(){
+  const posted=S.clips.filter(c=>c.postedAt&&c.stage!=='Rejected');
+  const wk=posted.filter(c=>daysAgo(c.postedAt)<7).length,tgt=num(S.settings.dailyTarget)*7;
+  const td=posted.filter(c=>c.postedAt===today()).length,dt=num(S.settings.dailyTarget);
+  const totViews=posted.reduce((a,c)=>a+views(c),0);
+  const earned=S.clips.reduce((a,c)=>a+est(c),0);
+  const paid=S.clips.filter(c=>c.stage==='Paid').reduce((a,c)=>a+est(c),0);
+  const pending=S.clips.filter(c=>['Submitted','Approved'].includes(c.stage)).reduce((a,c)=>a+est(c),0);
+  const todos=[];
+  S.clips.forEach(c=>{
+    if(c.stage==='Ready'&&(!c.scheduledFor||c.scheduledFor<=today()))todos.push({d:'',t:`Post: ${c.title}`,s:c.scheduledFor?'Scheduled '+c.scheduledFor:'Ready to go',fn:`editClip('${c.id}')`});
+    if(c.stage==='Posted')todos.push({d:'w',t:`Submit to campaign: ${c.title}`,s:'Submit right after posting',fn:`editClip('${c.id}')`});
+    const da=daysAgo(c.postedAt);
+    if(c.postedAt&&c.stage!=='Rejected'&&da>=2&&!c.views48)todos.push({d:'',t:`Log 48h views: ${c.title}`,s:`Posted ${da} days ago`,fn:`editClip('${c.id}')`});
+    if(c.postedAt&&c.stage!=='Rejected'&&da>=7&&!c.views7)todos.push({d:'',t:`Log 7-day views: ${c.title}`,s:`Posted ${da} days ago`,fn:`editClip('${c.id}')`});
+    if(c.stage==='Approved'&&c.submittedAt&&daysAgo(c.submittedAt)>=12)todos.push({d:'w',t:`Check payout: ${c.title}`,s:'Should have settled by now',fn:`editClip('${c.id}')`});
+  });
+  S.campaigns.filter(k=>k.status==='Active'&&k.budgetLeft!==''&&k.budgetLeft!=null&&num(k.budgetLeft)<20).forEach(k=>todos.push({d:'b',t:`Budget low: ${k.name}`,s:`${num(k.budgetLeft)}% left — update or switch campaigns`,fn:`editCamp('${k.id}')`}));
+  S.accounts.filter(a=>a.status==='Warming up').forEach(a=>todos.push({d:'',t:`Warm-up: ${a.handle} (${a.platform})`,s:`${(a.warmup||[]).length}/${WARMUP.length} steps done`,fn:`editAcct('${a.id}')`}));
+  const inWork=S.clips.filter(c=>['Idea','Editing'].includes(c.stage)).length;
+  const ready=S.clips.filter(c=>c.stage==='Ready').length;
+  const needed=Math.max(0,dt-td);
+  return `<div class="stack">
+  <div class="row between"><h2>Today</h2><div class="row"><button class="btn" onclick="editCamp()">+ Campaign</button><button class="btn" onclick="editAcct()">+ Account</button></div></div>
+  <div class="grid g4">
+    ${tile('Posted today',`${td} / ${dt}`,`<div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,dt?td/dt*100:0)}%"></i></div>`)}
+    ${tile('This week',`${wk} / ${tgt}`,`<div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,tgt?wk/tgt*100:0)}%"></i></div>`)}
+    ${tile('Total views',fmtN(totViews),`${posted.length} clips posted`)}
+    ${tile('Est. earnings',fmt$(earned),`${fmt$(paid)} paid · ${fmt$(pending)} pending`)}
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do</h3><span class="chip">${todos.length}</span></div>
+      ${todos.length?todos.map(t=>`<div class="todo" onclick="${t.fn}"><span class="dot ${t.d}"></span><div><div>${esc(t.t)}</div><div class="muted small">${esc(t.s)}</div></div></div>`).join(''):`<div class="muted small" style="padding:10px 0">Nothing due. Go find moments.</div>`}
+    </div>
+    <div class="card stack">
+      <h3>Pipeline</h3>
+      <div class="row">${STAGES.map(s=>{const n=S.clips.filter(c=>c.stage===s).length;return `<span class="chip ${n&&s!=='Rejected'?'a':''}">${s} ${n}</span>`}).join('')}</div>
+      <div class="muted small">${needed?`You need <b style="color:var(--text)">${needed}</b> more post${needed>1?'s':''} today. ${ready} ready, ${inWork} in progress.`:'Daily target hit. Batch-edit tomorrow\'s clips.'}</div>
+      ${ready<dt?`<div class="muted small">Your ready queue is under one day of posts — batch-edit on your next off day.</div>`:''}
+      <div class="row"><button class="btn" onclick="nav('pipe')">Open pipeline</button><button class="btn" onclick="bulkAdd()">Bulk add moments</button></div>
+    </div>
+  </div>
+  ${S.campaigns.length+S.accounts.length+S.clips.length===0?`<div class="card stack"><h3>Get started</h3>
+    <div class="muted">1. Add your 3 accounts and start the 5-day warm-up. 2. Add a campaign you're scouting. 3. Drop moments from Opus into "Bulk add moments". 4. Move clips across the pipeline as you edit, post, submit, and get paid.</div>
+    <div class="row"><button class="btn primary" onclick="editAcct()">Add first account</button><button class="btn" onclick="nav('play')">Read the playbook</button></div></div>`:''}
+  </div>`;
+}
+const tile=(k,v,s)=>`<div class="card tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+
+/* ---------- Bulk add ---------- */
+function bulkAdd(){
+  const ov=document.createElement('div');ov.className='ov';ov.id='ov';
+  ov.innerHTML=`<div class="modal"><div class="hd"><h3>Bulk add moments</h3><button class="btn ghost" onclick="closeForm()">✕</button></div>
+  <div class="bd stack"><div class="muted small">Paste one moment per line from Opus Clip (or your own notes): <code>timestamp | hook</code>. Each line becomes a clip in “Idea”.</div>
+  <div><label class="f">Campaign</label><select id="ba_c">${campOpts().map(([v,l])=>`<option value="${esc(v)}" ${v===pipeFilter?'selected':''}>${esc(l)}</option>`).join('')}</select></div>
+  <div><label class="f">Source video link</label><input id="ba_s" type="url" placeholder="https://"></div>
+  <div><label class="f">Moments</label><textarea id="ba_t" style="min-height:160px" placeholder="03:12 – 03:48 | He blew his first funded account in 2 days
+14:05 – 14:40 | Why 90% of prop traders fail"></textarea></div></div>
+  <div class="ft"><div></div><div class="row"><button class="btn" onclick="closeForm()">Cancel</button><button class="btn primary" onclick="bulkSave()">Add clips</button></div></div></div>`;
+  document.body.appendChild(ov);FORM={};document.getElementById('ba_t').focus();
+}
+function bulkSave(){
+  const cid=document.getElementById('ba_c').value,src=document.getElementById('ba_s').value.trim();
+  const lines=document.getElementById('ba_t').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  lines.forEach(l=>{const [ts,...rest]=l.split('|');const hook=(rest.join('|')||ts).trim();
+    S.clips.push({id:uid(),stage:'Idea',createdAt:today(),campaignId:cid,sourceUrl:src,sourceTs:rest.length?ts.trim():'',title:hook,hook,platforms:[...PLATFORMS],editChecks:[]})});
+  closeForm();save();render();toast(`Added ${lines.length} clip${lines.length===1?'':'s'}`);
+}
+
+/* ---------- Pipeline ---------- */
+function vPipe(){
+  const list=S.clips.filter(c=>!pipeFilter||c.campaignId===pipeFilter);
+  return `<div class="stack">
+  <div class="row between"><h2>Pipeline</h2>
+    <div class="row"><select style="width:auto;max-width:220px" onchange="pipeFilter=this.value;render()"><option value="">All campaigns</option>${S.campaigns.map(c=>`<option value="${c.id}" ${c.id===pipeFilter?'selected':''}>${esc(c.name)}</option>`).join('')}</select>
+    <button class="btn" onclick="bulkAdd()">Bulk add</button><button class="btn primary" onclick="editClip()">+ Clip</button></div></div>
+  <div class="board">${STAGES.map(s=>{const cs=list.filter(c=>c.stage===s);
+    return `<div class="col"><h3><span>${s}</span><span class="muted">${cs.length}</span></h3>
+    ${cs.map(kcard).join('')||'<div class="muted small" style="padding:4px 4px 8px">—</div>'}</div>`}).join('')}</div></div>`;
+}
+function kcard(c){
+  const k=camp(c.campaignId);const ec=(c.editChecks||[]).length;const v=views(c);
+  const metas=[];
+  if(k)metas.push(`<span class="chip">${esc(k.name)}</span>`);
+  if(c.hookType)metas.push(`<span class="chip">${esc(c.hookType)}</span>`);
+  if(['Idea','Editing','Ready'].includes(c.stage))metas.push(`<span class="chip ${ec===EDIT_CHECKS.length?'g':''}">Edit ${ec}/${EDIT_CHECKS.length}</span>`);
+  if(c.scheduledFor&&c.stage==='Ready')metas.push(`<span class="chip a">📅 ${c.scheduledFor.slice(5)}</span>`);
+  if(v)metas.push(`<span class="chip a">${fmtN(v)} views</span>`);
+  if(est(c))metas.push(`<span class="chip g">${fmt$(est(c))}</span>`);
+  const canReject=['Submitted','Approved'].includes(c.stage);
+  return `<div class="kc" onclick="editClip('${c.id}')"><div class="t">${esc(c.title)}</div>${c.sourceTs?`<div class="muted small">${esc(c.sourceTs)}</div>`:''}
+  <div class="m">${metas.join('')}</div>
+  <div class="mv"><button class="btn sm" onclick="moveClip('${c.id}',-1,event)" aria-label="Back">‹</button>${canReject?`<button class="btn sm danger" onclick="rejectClip('${c.id}',event)">Rejected</button>`:''}<button class="btn sm" onclick="moveClip('${c.id}',1,event)" aria-label="Forward">›</button></div></div>`;
+}
+
+/* ---------- Campaigns ---------- */
+function vCamps(){
+  const order={Active:0,Scouting:1,Paused:2,Ended:3};
+  const list=[...S.campaigns].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
+  return `<div class="stack"><div class="row between"><h2>Campaigns</h2><button class="btn primary" onclick="editCamp()">+ Campaign</button></div>
+  <div class="muted small">Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div>
+  ${list.length?`<div class="grid g3">${list.map(campCard).join('')}</div>`:`<div class="empty">No campaigns yet. Add the ones you're scouting on Whop or Duzlo.</div>`}</div>`;
+}
+function campCard(k){
+  const cs=S.clips.filter(c=>c.campaignId===k.id&&c.stage!=='Rejected');
+  const posted=cs.filter(c=>c.postedAt);const v=posted.reduce((a,c)=>a+views(c),0);const e=cs.reduce((a,c)=>a+est(c),0);
+  const rej=S.clips.filter(c=>c.campaignId===k.id&&c.stage==='Rejected').length;
+  const sc=campScore(k);const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';
+  const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
+  return `<div class="card stack">
+    <div class="row between"><h3 style="cursor:pointer" onclick="editCamp('${k.id}')">${esc(k.name)}</h3><span class="chip ${stc}">${esc(k.status)}</span></div>
+    <div class="row small"><span class="chip">${esc(k.marketplace||'')}</span><span class="chip ${sc>=4?'g':sc>=3?'w':'b'}">Score ${sc}/5</span>${k.cpm?`<span class="chip a">$${num(k.cpm).toFixed(2)} / 1K</span>`:''}${k.maxPerClip?`<span class="chip">Cap $${esc(k.maxPerClip)}</span>`:''}</div>
+    ${bl!=null?`<div><div class="row between small muted"><span>Budget left</span><span>${bl}%</span></div><div class="bar"><i style="width:${Math.min(100,bl)}%;${bl<20?'background:var(--bad)':''}"></i></div></div>`:''}
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
+      <div><div class="muted small">Clips</div><b>${cs.length}</b></div><div><div class="muted small">Views</div><b>${fmtN(v)}</b></div><div><div class="muted small">Est. $</div><b>${fmt$(e)}</b></div></div>
+    ${rej?`<div class="small" style="color:var(--bad)">${rej} rejected — reread the brief</div>`:''}
+    ${k.requiredTags?`<div class="small"><span class="muted">Required:</span> ${esc(k.requiredTags)}</div>`:''}
+    <div class="row">${k.requiredTags?`<button class="btn sm" onclick='copy(${JSON.stringify(k.requiredTags).replace(/'/g,"&#39;")})'>Copy tags</button>`:''}
+    ${k.briefUrl?`<a class="btn sm" href="${esc(k.briefUrl)}" target="_blank" rel="noopener">Brief ↗</a>`:''}${k.sourceUrl?`<a class="btn sm" href="${esc(k.sourceUrl)}" target="_blank" rel="noopener">Source ↗</a>`:''}
+    <button class="btn sm" onclick="pipeFilter='${k.id}';nav('pipe')">Clips</button><button class="btn sm" onclick="editCamp('${k.id}')">Edit</button></div>
+  </div>`;
+}
+
+/* ---------- Accounts ---------- */
+function vAccts(){
+  return `<div class="stack"><div class="row between"><h2>Accounts</h2><button class="btn primary" onclick="editAcct()">+ Account</button></div>
+  <div class="muted small">One niche per account. Warm up 3–5 days (scroll and engage in the niche) before your first post. Don't keep passwords here.</div>
+  ${S.accounts.length?`<div class="grid g3">${S.accounts.map(a=>{const w=(a.warmup||[]).length;const stc={Active:'a','Warming up':'w',Paused:'',Flagged:'b'}[a.status]||'';
+    const posts=S.clips.filter(c=>c.postedAt&&(c.platforms||[]).includes(a.platform)&&c.stage!=='Rejected').length;
+    return `<div class="card stack" style="cursor:pointer" onclick="editAcct('${a.id}')">
+      <div class="row between"><h3>${esc(a.handle)}</h3><span class="chip ${stc}">${esc(a.status)}</span></div>
+      <div class="row"><span class="chip">${esc(a.platform)}</span>${a.niche?`<span class="chip">${esc(a.niche)}</span>`:''}${a.followers?`<span class="chip a">${fmtN(num(a.followers))} followers</span>`:''}</div>
+      <div><div class="row between small muted"><span>Warm-up</span><span>${w}/${WARMUP.length}</span></div><div class="bar"><i style="width:${w/WARMUP.length*100}%"></i></div></div>
+      <div class="muted small">${posts} clips posted to ${esc(a.platform)}${a.created?` · created ${esc(a.created)}`:''}</div></div>`}).join('')}</div>`
+  :`<div class="empty">No accounts yet. Add TikTok, YouTube Shorts and Instagram under the same handle.</div>`}</div>`;
+}
+
+/* ---------- Captions ---------- */
+function vCaps(){
+  const clips=S.clips.filter(c=>c.stage!=='Paid'&&c.stage!=='Rejected');
+  const c=S.clips.find(x=>x.id===capState.clipId);const k=c&&camp(c.campaignId);
+  const bank=(S.settings.hashtagBank||'').split(/\s+/).filter(Boolean);
+  return `<div class="stack"><h2>Captions & hashtags</h2>
+  <div class="grid g2">
+    <div class="card stack">
+      <h3>1 · Build the AI prompt</h3>
+      <div><label class="f">Clip</label><select id="cap_clip" onchange="capState.clipId=this.value;capState.tags=[];render()"><option value="">— Pick a clip —</option>${clips.map(x=>`<option value="${x.id}" ${x.id===capState.clipId?'selected':''}>${esc(x.title)} · ${x.stage}</option>`).join('')}</select></div>
+      ${k?`<div class="small"><span class="muted">Campaign:</span> ${esc(k.name)}${k.requiredTags?` · <span class="muted">Required:</span> ${esc(k.requiredTags)}`:''}</div>`:''}
+      <div><label class="f">Transcript of the clip</label><textarea id="cap_tr" placeholder="Paste the transcript from Opus Clip or CapCut auto-captions" oninput="capState.transcript=this.value">${esc(capState.transcript)}</textarea></div>
+      <div class="row"><button class="btn primary" onclick="buildPrompt()">Build prompt</button><button class="btn" onclick="copy(document.getElementById('cap_prompt').value)">Copy prompt</button></div>
+      <textarea id="cap_prompt" readonly style="min-height:150px" placeholder="Your prompt shows up here. Paste it into Claude or ChatGPT."></textarea>
+    </div>
+    <div class="card stack">
+      <h3>2 · Final caption</h3>
+      <div><label class="f">Caption</label><textarea id="cap_txt" placeholder="Paste the best caption from the AI" oninput="capPreview()">${esc(c&&c.caption?c.caption.replace(/\n\n#.*$/s,''):'')}</textarea></div>
+      <div><label class="f">Hashtags — tap to add</label><div class="row" id="cap_bank">${bank.map(t=>`<span class="chip click ${capState.tags.includes(t)?'on':''}" onclick="toggleTag('${esc(t)}')">${esc(t)}</span>`).join('')||'<span class="muted small">Add a hashtag bank in Settings.</span>'}</div></div>
+      <div class="muted small">Required campaign tags are added automatically. Keep it to 3–5 niche tags.</div>
+      <div><label class="f">Preview <span id="cap_cnt"></span></label><textarea id="cap_out" readonly style="min-height:110px"></textarea></div>
+      <div class="row"><button class="btn primary" onclick="copy(document.getElementById('cap_out').value)">Copy caption</button>${c?`<button class="btn" onclick="saveCap()">Save to clip</button>`:''}</div>
+    </div>
+  </div></div>`;
+}
+function capsAfter(){capPreview()}
+function toggleTag(t){const i=capState.tags.indexOf(t);if(i>=0)capState.tags.splice(i,1);else capState.tags.push(t);
+  document.querySelectorAll('#cap_bank .chip').forEach(el=>el.classList.toggle('on',capState.tags.includes(el.textContent)));capPreview()}
+function capPreview(){
+  const el=document.getElementById('cap_out');if(!el)return;
+  const c=S.clips.find(x=>x.id===capState.clipId);const k=c&&camp(c.campaignId);
+  const txt=document.getElementById('cap_txt').value.trim();
+  const req=k&&k.requiredTags?k.requiredTags.trim():'';
+  const tags=[req,...capState.tags.filter(t=>!req.includes(t))].filter(Boolean).join(' ');
+  el.value=(txt+(tags?'\n\n'+tags:'')).trim();
+  document.getElementById('cap_cnt').textContent=`· ${el.value.length} chars`;
+}
+function buildPrompt(){
+  const c=S.clips.find(x=>x.id===capState.clipId);const k=c&&camp(c.campaignId);
+  const tr=document.getElementById('cap_tr').value.trim();
+  if(!tr){toast('Paste the transcript first');return}
+  const p=`You're writing post copy for a short-form clip going on TikTok, YouTube Shorts and Instagram Reels.
+Niche: ${S.settings.niche||'general'}
+${k?`Campaign: ${k.name}\n`:''}${k&&k.requiredTags?`Required tags/mentions (must appear exactly): ${k.requiredTags}\n`:''}${c&&c.hookType?`Hook angle I'm going for: ${c.hookType}\n`:''}
+Transcript:
+"""
+${tr}
+"""
+
+Give me:
+1. 5 on-screen hook lines for the first 2 seconds (max 8 words each, curiosity-driven, nothing the clip doesn't deliver)
+2. 3 caption options under 150 characters
+3. 1 YouTube Shorts title under 70 characters
+4. 5 niche hashtags (no generic #fyp / #viral)
+
+Plain text, numbered, no explanations.`;
+  document.getElementById('cap_prompt').value=p;
+}
+function saveCap(){const c=S.clips.find(x=>x.id===capState.clipId);if(!c)return;c.caption=document.getElementById('cap_out').value;save();toast('Saved to clip')}
+
+/* ---------- Review ---------- */
+function median(a){if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2}
+function groupBars(title,rows){
+  const max=Math.max(1,...rows.map(r=>r.avg));
+  return `<div class="card"><h3 style="margin-bottom:8px">${title}</h3>${rows.length?rows.map(r=>`<div class="hbar"><span class="small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.label)} <span class="muted">(${r.n})</span></span><div class="bar"><i style="width:${r.avg/max*100}%"></i></div><span class="small num" style="text-align:right">${fmtN(r.avg)} avg</span></div>`).join(''):'<div class="muted small">No data yet.</div>'}</div>`;
+}
+function grp(list,keyFn){const m={};list.forEach(c=>{const k=keyFn(c);if(!k)return;(m[k]=m[k]||[]).push(c)});
+  return Object.entries(m).map(([label,cs])=>({label,n:cs.length,avg:cs.reduce((a,c)=>a+views(c),0)/cs.length,earn:cs.reduce((a,c)=>a+est(c),0)})).sort((a,b)=>b.avg-a.avg)}
+function vReview(){
+  const list=S.clips.filter(c=>c.postedAt&&c.stage!=='Rejected');
+  const withV=list.filter(c=>views(c)>0);const med=median(withV.map(views));
+  const rows=[...list].sort((a,b)=>{const k=reviewSort.k;let x,y;
+    if(k==='est'){x=est(a);y=est(b)}else if(['views48','views7','lengthSec'].includes(k)){x=num(a[k]);y=num(b[k])}else{x=String(a[k]||'');y=String(b[k]||'')}
+    return (x>y?1:x<y?-1:0)*reviewSort.d});
+  const lenB=c=>{const l=num(c.lengthSec);if(!l)return'';return l<20?'Under 20s':l<=45?'20–45s':'Over 45s'};
+  const rej=S.clips.filter(c=>c.stage==='Rejected').length,sub=S.clips.filter(c=>c.submittedAt).length;
+  const th=(k,l,cls='')=>`<th class="${cls}" onclick="sortBy('${k}')">${l}${reviewSort.k===k?(reviewSort.d>0?' ↑':' ↓'):''}</th>`;
+  return `<div class="stack"><h2>Review</h2>
+  <div class="grid g4">
+    ${tile('Median views',fmtN(med),'per posted clip (7-day if logged)')}
+    ${tile('Winners',String(withV.filter(c=>med&&views(c)>=3*med).length),'clips at 3× median or more')}
+    ${tile('Est. $ / clip',fmt$(list.length?list.reduce((a,c)=>a+est(c),0)/list.length:0),'across posted clips')}
+    ${tile('Rejection rate',sub?Math.round(rej/sub*100)+'%':'—',`${rej} of ${sub} submitted`)}
+  </div>
+  <div class="grid g3">${groupBars('By hook type',grp(withV,c=>c.hookType))}${groupBars('By clip length',grp(withV,lenB))}${groupBars('By campaign',grp(withV,c=>camp(c.campaignId)?.name))}</div>
+  <div class="card"><div class="row between" style="margin-bottom:8px"><h3>Every posted clip</h3><span class="muted small">★ = 3× median. Make more like these.</span></div>
+  ${list.length?`<div class="tw"><table><thead><tr>${th('title','Clip')}${th('postedAt','Posted')}${th('hookType','Hook')}${th('lengthSec','Len','num')}${th('views48','48h','num')}${th('views7','7 day','num')}${th('est','Est. $','num')}${th('stage','Stage')}</tr></thead><tbody>
+  ${rows.map(c=>{const w=med&&views(c)>=3*med;return `<tr class="click" onclick="editClip('${c.id}')"><td>${w?'<span style="color:var(--accent)">★</span> ':''}${esc(c.title.length>40?c.title.slice(0,40)+'…':c.title)}</td><td>${esc(c.postedAt)}</td><td>${esc(c.hookType||'—')}</td><td class="num">${c.lengthSec?esc(c.lengthSec)+'s':'—'}</td><td class="num">${c.views48?fmtN(num(c.views48)):'—'}</td><td class="num">${c.views7?fmtN(num(c.views7)):'—'}</td><td class="num">${fmt$(est(c))}</td><td><span class="chip">${c.stage}</span></td></tr>`}).join('')}
+  </tbody></table></div>`:'<div class="empty">Post a clip and log its views to see what works.</div>'}</div>
+  <div class="card stack"><h3>Weekly review questions</h3><div class="muted small">Which hook type has the best average? Which source moments became winners? Is any campaign under $0.50 per clip after 7 days — drop it. Did anything get rejected — what rule did it miss?</div></div>
+  </div>`;
+}
+function sortBy(k){reviewSort=reviewSort.k===k?{k,d:-reviewSort.d}:{k,d:-1};render()}
+
+/* ---------- Playbook ---------- */
+function vPlay(){
+  const steps=[
+    ['Start the page',['One niche per account, same handle on TikTok, YouTube Shorts and Instagram','No face needed — clear bio about what the page posts','Warm up 3–5 days: scroll and engage in your niche before posting','Never buy accounts — monetization doesn\'t matter for campaigns']],
+    ['Find the campaign',['Rate of $1+ per 1,000 views, with plenty of budget left','Check the per-clip cap and minimum views','Make sure your platforms are allowed','Read the whole brief — missed tags are the #1 rejection reason']],
+    ['Get the best moments',['Run the source through Opus Clip for candidate timestamps','Watch the top 10 yourself — you pick, not the AI','Hook in the first 2 seconds, makes sense alone, has a peak','Aim for 20–45 seconds · drop them in with Bulk add']],
+    ['Edit in CapCut',['9:16 framed on the speaker, cut dead air and filler','Hook text on screen from frame one','Captions burned in, light zooms and sound effects','Add your own layer (title, context, voiceover) — YouTube now cuts reach for low-effort reuploads']],
+    ['Captions & hashtags',['Paste the transcript in the Captions tab, build the prompt','Pick the best hook and caption from the AI','Required campaign tags first, then 3–5 niche tags']],
+    ['Post',['Upload natively to each platform','Batch-edit on off days, schedule posts for shop days','Hit your daily target every day — consistency wins']],
+    ['Submit to the campaign',['Submit the post link right after it goes live','Screenshot the post in case you need to appeal','Whop: ~7-day earning window, then settles ~10 days after approval']],
+    ['Review',['Log views at 48 hours and 7 days','Check the Review tab weekly: best hook types, lengths and campaigns','Make more of the ★ winners, drop campaigns that never hit']],
+  ];
+  return `<div class="stack"><h2>Playbook</h2><div class="grid g2">${steps.map(([t,l],i)=>`<div class="card step"><div class="n">${i+1}</div><div><h3>${t}</h3><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>`).join('')}</div></div>`;
+}
+
+/* ---------- Settings ---------- */
+function vSettings(){
+  const s=S.settings;
+  return `<div class="stack"><h2>Settings</h2>
+  <div class="card stack"><div class="fields">
+    <div><label class="f">Daily post target (clips)</label><input type="number" id="s_t" value="${esc(s.dailyTarget)}"></div>
+    <div><label class="f">Marketplace fee (%)</label><input type="number" id="s_f" value="${esc(s.feePct)}"></div>
+    <div><label class="f">Your niche</label><input id="s_n" value="${esc(s.niche)}"></div>
+    <div class="full"><label class="f">Hashtag bank (space-separated)</label><textarea id="s_h">${esc(s.hashtagBank)}</textarea></div>
+  </div><div><button class="btn primary" onclick="saveSettings()">Save settings</button></div></div>
+  <div class="card stack"><h3>Backup</h3>
+    <div class="muted small">Your data lives in this browser only. Clearing site data or switching devices loses it — export a backup weekly, and import it on any other device.</div>
+    <div class="row"><button class="btn" onclick="exportJSON()">Export backup (.json)</button><label class="btn">Import backup<input type="file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"></label><button class="btn" onclick="exportCSV()">Export clips (.csv)</button></div>
+    <div class="muted small">${S.accounts.length} accounts · ${S.campaigns.length} campaigns · ${S.clips.length} clips</div>
+  </div>
+  <div class="card stack"><h3>Danger zone</h3><div><button class="btn danger" onclick="resetAll()">Erase all data</button></div></div></div>`;
+}
+function saveSettings(){S.settings={...S.settings,dailyTarget:num(document.getElementById('s_t').value)||1,feePct:num(document.getElementById('s_f').value),niche:document.getElementById('s_n').value.trim(),hashtagBank:document.getElementById('s_h').value.trim()};save();render();toast('Settings saved')}
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function exportJSON(){download(`clipper-backup-${today()}.json`,JSON.stringify(S,null,2),'application/json')}
+function exportCSV(){
+  const cols=['title','stage','campaign','hookType','hook','lengthSec','sourceUrl','sourceTs','postedAt','submittedAt','views48','views7','est','paid','urlTT','urlYT','urlIG'];
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const lines=[cols.join(',')].concat(S.clips.map(c=>cols.map(k=>k==='campaign'?q(camp(c.campaignId)?.name):k==='est'?q(est(c).toFixed(2)):q(c[k])).join(',')));
+  download(`clipper-clips-${today()}.csv`,lines.join('\n'),'text/csv');
+}
+function importJSON(inp){
+  const f=inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.clips)||!Array.isArray(d.campaigns))throw 0;
+    if(!confirm('Replace everything here with this backup?'))return;const base=defaults();S={...base,...d,settings:{...base.settings,...(d.settings||{})}};save();render();toast('Backup imported')}
+    catch(e){toast('That file isn\'t a Clipper backup')}};
+  r.readAsText(f);
+}
+function resetAll(){if(!confirm('Erase all Clipper data in this browser? Export a backup first if you need it.'))return;S=defaults();save();render();toast('Erased')}
+
+render();
+</script>
+</body>
+</html>
