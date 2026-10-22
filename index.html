@@ -230,6 +230,10 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .aline{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;border-left:2px solid var(--line);margin-left:2px}
 .aline:hover{background:var(--panel2)}
 .aline{cursor:pointer}
+.campline{padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
+.campline:first-of-type{border-top:0}
+.campline:hover .h{color:var(--accent)}
+.campline .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .charttodo{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:stretch}
 .todoside{display:flex;flex-direction:column;max-height:340px}
 .todoside .scroll{overflow-y:auto;flex:1;min-height:0}
@@ -893,6 +897,21 @@ function pipelineCard(b,cs){
     <div class="row"><button class="btn sm" onclick="bulkAdd()">Bulk add</button><button class="btn sm primary" onclick="editClip()">+ Clip</button></div></div>
     ${board(cs)}</div>`;
 }
+/* compact campaign list for the brand page's side column */
+function campSide(b,as,cs){
+  const camps=brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3};
+  return `<div class="card"><div class="row between" style="margin-bottom:6px"><h3>Campaigns</h3><button class="btn sm primary" onclick="editCamp()">+ Campaign</button></div>
+  ${camps.length?[...camps].sort((x,y)=>(order[x.status]??9)-(order[y.status]??9)).map(k=>{
+    const kc=cs.filter(c=>c.campaignId===k.id);const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
+    const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';const ls=kc.map(c=>c.submittedAt).filter(Boolean).sort().pop();
+    return `<div class="campline" id="c-${k.id}" onclick="go('camp','${k.id}')">
+      <div class="row between nowrap"><b class="h">${esc(k.name)}</b><span class="chip ${stc}">${esc(k.status)}</span></div>
+      <div class="row small muted" style="gap:10px;margin-top:4px">${k.cpm?`<span><b style="color:var(--text)">$${num(k.cpm).toFixed(2)}</b>/1K</span>`:''}<span><b style="color:var(--text)">${kc.filter(c=>c.stage==='Ready').length}</b> ready</span><span><b style="color:var(--text)">${kc.filter(c=>['Posted','Submitted','Approved'].includes(c.stage)).length}</b> live</span><span><b style="color:var(--text)">${fmt$(kc.reduce((s,c)=>s+est(c),0))}</b></span></div>
+      ${bl!=null?`<div class="row nowrap small muted" style="margin-top:6px;gap:8px"><div class="bar" style="flex:1"><i style="width:${Math.min(100,bl)}%;${bl<20?'background:var(--bad)':''}"></i></div><span>${bl}% left</span></div>`:''}
+      <div class="small muted" style="margin-top:4px">Last submit: ${ls?`${daysAgo(ls)}d ago`:'never'}</div>
+    </div>`}).join(''):'<div class="muted small" style="padding:10px 0">No campaigns yet. Add one and link it to this brand\'s accounts.</div>'}
+  </div>`;
+}
 function vBrand(id){
   const b=brand(id);if(!b)return `<div class="empty">That brand doesn't exist anymore. <a href="#/accts">Back to brands</a></div>`;
   const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
@@ -919,13 +938,8 @@ function vBrand(id){
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
       <div class="brands">${as.map(a=>acctCard(a,true)).join('')}<button class="addcard slim" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
     </div>
-    <aside class="stack" style="position:static">
-    <div class="card" id="folbulk"><h3 style="margin-bottom:4px">Log followers</h3><div class="muted small" style="margin-bottom:10px">Weekly ritual: type each account's current count and save. It adds today's point to every graph.</div>
-      ${as.length?as.map(a=>`<div class="hookrow">${pb(a.platform,'xs')}<div class="q">${esc(a.handle)}<div class="muted small">${lastLog(a)?`Last: ${fmtN(num(a.followers))} on ${esc(lastLog(a))}`:'Never logged'}</div></div><input type="number" min="0" class="inline" style="width:120px" data-fol="${a.id}" placeholder="${esc(a.followers||'0')}"></div>`).join('')+`<div style="margin-top:10px"><button class="btn primary" onclick="logFolBulk()">Save today's counts</button></div>`:'<div class="muted small">Add accounts first.</div>'}
-    </div>
-    </aside>
+    <aside class="stack" style="position:static">${campSide(b,as,cs)}</aside>
   </div>
-  ${brandPanels(b,as,cs)}
   ${b.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(b.notes)}</div></div>`:''}
   </div>`;
 }
@@ -933,11 +947,6 @@ function logFol(aid){
   const a=acct(aid),v=document.getElementById('fol_in').value,d=document.getElementById('fol_d').value||today();
   if(v===''||num(v)<0){toast('Type the follower count first');return}
   recordFollowers(a,v,d);save();render();toast(`Logged ${fmtN(num(v))} for ${a.handle}`);
-}
-function logFolBulk(){
-  let n=0;document.querySelectorAll('[data-fol]').forEach(el=>{if(el.value!==''){recordFollowers(acct(el.dataset.fol),el.value);n++}});
-  if(!n){toast('Type at least one count');return}
-  save();render();toast(`Logged ${n} account${n===1?'':'s'}`);
 }
 function acctCard(a,row){
   const s=acctStats(a);const w=(a.warmup||[]).length;
