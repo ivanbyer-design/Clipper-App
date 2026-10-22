@@ -817,7 +817,7 @@ function vAccts(){
     <div class="row"><button class="btn" onclick="editAcct()">+ Account</button><button class="btn primary" onclick="editBrand()">+ Brand</button></div></div>
   <div class="card"><div class="row between" style="margin-bottom:10px"><div><h3>Follower growth</h3><div class="muted small">All accounts${homeChart==='brand'?', split by brand':''}</div></div>
     <div class="seg"><button class="${homeChart==='total'?'on':''}" onclick="homeChart='total';render()">Total</button><button class="${homeChart==='brand'?'on':''}" onclick="homeChart='brand';render()">By brand</button></div></div>
-    ${chartBox(series,{h:260,label:'Followers across all accounts over time'})}</div>
+    ${chartBox(series,{h:170,label:'Followers across all accounts over time'})}</div>
   <div class="grid g4">
     ${tile('Followers',fmtN(fol),`<span style="color:${g30>0?'var(--good)':'inherit'}">${sgn(g30)}</span> in the last 30 days`)}
     ${tile('Brands · accounts',`${S.brands.length} · ${S.accounts.length}`,`${S.accounts.filter(a=>a.monetized==='Paid').length} paid accounts`)}
