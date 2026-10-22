@@ -867,7 +867,7 @@ function vBrand(id){
     <div class="grow"><h1>${esc(b.name)}</h1><div class="muted small">${esc(b.niche||'')}${b.niche?' · ':''}${as.length} account${as.length===1?'':'s'}</div></div>
     <div class="row"><button class="btn" onclick="editBrand('${b.id}')">Edit brand</button><button class="btn primary" onclick="editAcct()">+ Account</button></div></div>
   <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
-    ${chartBox(series,{h:260,label:`Followers per ${b.name} account over time`})}</div>
+    ${chartBox(series,{h:170,label:`Followers per ${b.name} account over time`})}</div>
   <div class="grid g4">
     ${tile('Followers',fmtN(fol),`${sgn(gain(as,7))} this week · ${sgn(gain(as,30))} in 30 days`)}
     ${tile('Clips posted',posted.length,`${cs.length-posted.length} in progress`)}
