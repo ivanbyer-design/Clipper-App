@@ -234,6 +234,9 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .campline:first-of-type{border-top:0}
 .campline:hover .h{color:var(--accent)}
 .campline .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.dash.eqh{align-items:stretch}
+.dash.eqh>aside{display:flex;flex-direction:column}
+.dash.eqh>aside>.card{flex:1}
 .charttodo{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:stretch}
 .todoside{display:flex;flex-direction:column;max-height:340px}
 .todoside .scroll{overflow-y:auto;flex:1;min-height:0}
@@ -933,7 +936,7 @@ function vBrand(id){
   </div>
   ${brandOps(b,as,cs)}
   ${pipelineCard(b,cs)}
-  <div class="dash">
+  <div class="dash eqh">
     <div class="stack">
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
       <div class="brands">${as.map(a=>acctCard(a,true)).join('')}<button class="addcard slim" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
