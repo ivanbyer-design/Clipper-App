@@ -43,39 +43,21 @@ h3{font-size:16px}
 .hbtn{height:36px;padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font:600 13px Inter;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .hbtn:hover{background:rgba(255,255,255,.14)}
 #todayLbl{color:rgba(255,255,255,.6);font-size:13px}
-.app{display:flex;align-items:flex-start;background:var(--hdr);min-height:calc(100vh - 58px)}
-.side{position:sticky;top:58px;height:calc(100vh - 58px);width:236px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:18px 14px 14px;overflow-y:auto;border-top-left-radius:14px;display:flex;flex-direction:column;transition:margin .25s ease}
-body.sb-collapsed .side{margin-left:-236px}
-main{flex:1;min-width:0;background:var(--bg);min-height:calc(100vh - 58px);padding:22px 26px 80px}
-body.sb-collapsed main{border-top-left-radius:14px}
+main{min-height:calc(100vh - 58px);padding:22px 26px 80px}
 main>*{max-width:1440px;margin-left:auto;margin-right:auto}
-.sb-add{position:relative;margin-bottom:16px}
-.sb-add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:9px;border:0;background:var(--accent);color:var(--accent-ink);font:600 14px Inter;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 30%,transparent)}
-.sb-add-btn:hover{filter:brightness(1.08)}
-.dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);z-index:35;padding:6px}
-.sb-add.open .dd-menu{display:block}
+.hnav{display:flex;gap:2px;margin-left:14px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.hnav::-webkit-scrollbar{display:none}
+.hnav a{color:rgba(255,255,255,.65);font:600 14px Inter;padding:7px 11px;border-radius:8px;text-decoration:none;white-space:nowrap}
+.hnav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.hnav a.on{color:#fff;background:rgba(255,255,255,.12)}
+.addwrap{position:relative}
+.addbtn{height:36px;padding:0 14px;border-radius:8px;border:0;background:var(--accent);color:var(--accent-ink);font:700 13px Inter;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.addbtn:hover{filter:brightness(1.08)}
+.dd-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;width:250px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);z-index:35;padding:6px}
+.addwrap.open .dd-menu{display:block}
 .dd-opt{display:block;width:100%;text-align:left;padding:9px 11px;border-radius:7px;border:0;background:none;color:var(--text);font:500 13px Inter;cursor:pointer}
 .dd-opt small{display:block;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
 .dd-opt:hover{background:var(--panel2)}
-.nav-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 12px 6px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:2px;border-radius:9px;color:var(--text);font:500 14px Inter;text-decoration:none;cursor:pointer}
-.nav-item svg{color:var(--muted);flex:none}
-.nav-item:hover{background:var(--panel2)}
-.nav-item.active{background:var(--accent-soft);color:var(--accent)}
-.nav-item.active svg{color:var(--accent)}
-.nav-item .h{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nav-item .c{font-size:11px;padding:1px 7px;border-radius:99px;background:var(--panel2);color:var(--muted);font-weight:600}
-.nav-item .c.w{color:var(--warn)}
-.nav-item .star{color:var(--gold);font-size:12px}
-.nav-acct{gap:10px}
-.nav-acct.open{font-weight:600}
-.nav-sub{margin:0 0 6px 16px;padding-left:6px;border-left:1px solid var(--line)}
-.nav-sub .nav-sub{margin-left:12px}
-.nav-sub .nav-item{padding:7px 10px;font-size:13px;gap:10px}
-.nav-sep{height:1px;background:var(--line);margin:12px 4px}
-.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
-.side-foot .btn{justify-content:center}
-.side-bd{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:44;backdrop-filter:blur(2px)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .nowrap{flex-wrap:nowrap}
 .between{justify-content:space-between}
@@ -206,6 +188,14 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .insight .i.w{background:var(--gold-soft);color:var(--warn)}
 .flash{animation:flash 1.8s ease-out 1;border-radius:10px}
 @keyframes flash{0%,45%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+/* account section tabs */
+.atabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.atabs::-webkit-scrollbar{display:none}
+.atabs a{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font:600 14px Inter;padding:10px 12px;border-bottom:2px solid transparent;text-decoration:none;white-space:nowrap;margin-bottom:-1px}
+.atabs a svg{width:16px;height:16px}
+.atabs a:hover{color:var(--text)}
+.atabs a.on{color:var(--text);border-bottom-color:var(--accent)}
+.atabs .c{font-size:11px;padding:1px 6px;border-radius:99px;background:var(--panel2);color:var(--muted)}
 /* charts */
 .chart{position:relative;width:100%}
 .chart svg{display:block;overflow:visible}
@@ -264,10 +254,11 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
   .dash aside{position:static}
 }
 @media (max-width:768px){
-  .side{position:fixed;top:0;left:0;bottom:0;height:100vh;z-index:45;border-radius:0;transform:translateX(-100%);transition:transform .2s ease;margin-left:0!important}
-  .side.open{transform:none}
-  .side-bd.open{display:block}
-  main{padding:16px 16px 80px;border-radius:0!important}
+  main{padding:16px 16px 80px}
+  .hnav{margin-left:4px}
+  .hnav a{padding:7px 8px;font-size:13px}
+  .logo .word{display:none}
+  .addbtn .word{display:none}
   #todayLbl{display:none}
   .hdr{padding:0 10px 0 6px}
 }
@@ -279,18 +270,15 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 </style>
 </head>
 <body>
-<div class="side-bd" id="sideBd" onclick="closeSide()"></div>
 <header class="hdr">
-  <button class="burger" onclick="toggleSide()" aria-label="Toggle menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-  <a class="logo" href="#/accts"><span class="mark">✂</span>Clipper</a>
+  <a class="logo" href="#/accts"><span class="mark">✂</span><span class="word">Clipper</span></a>
+  <nav class="hnav" id="hnav" aria-label="Pages"></nav>
   <div class="spacer"></div>
   <span id="todayLbl"></span>
   <button class="hbtn pomo-btn" id="pomoBtn" onclick="togglePomo()" aria-label="Focus timer">⏱ Focus</button>
+  <div class="addwrap" id="sbAdd"></div>
 </header>
-<div class="app">
-  <aside class="side" id="side" aria-label="Pages"></aside>
-  <main id="view"></main>
-</div>
+<main id="view"></main>
 <div class="toast" id="toast"></div>
 <aside class="drawer" id="pomo" aria-label="Focus timer"></aside>
 
@@ -393,7 +381,7 @@ async function copy(text){try{await navigator.clipboard.writeText(text);toast('C
 const VIEWS={accts:()=>vAccts(),brand:()=>vBrand(R.id),acct:()=>vAcct(R.id,R.sec),camps:()=>vCamps(),camp:()=>vCamp(R.id),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
 function parseHash(){const [v,id,sec]=location.hash.replace(/^#\/?/,'').split('/');R={v:VIEWS[v]?v:'accts',id:id||'',sec:sec||''}}
 function go(v,id,sec){const h='#/'+[v,id,sec].filter(Boolean).join('/');if(location.hash===h)render();else location.hash=h}
-window.addEventListener('hashchange',()=>{parseHash();closeSide();window.scrollTo(0,0);render()});
+window.addEventListener('hashchange',()=>{parseHash();window.scrollTo(0,0);render()});
 let TODOS=[];
 let FOCUS=null;
 function render(){
@@ -401,7 +389,7 @@ function render(){
   const a=R.v==='acct'&&acct(R.id);
   if(a&&CF.acct!==a.id){CF.acct=a.id;CF.camp=''}
   MED=a?median(S.clips.filter(c=>c.accountId===a.id&&isPosted(c)).map(views).filter(Boolean)):medViews();
-  renderSide();
+  renderHdr();
   document.getElementById('todayLbl').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
   CHARTS={};chartN=0;
   document.getElementById('view').innerHTML=VIEWS[R.v]();
@@ -448,58 +436,23 @@ function sideCtx(){
   if(R.v==='brand')b=brand(R.id);else if(a)b=brand(a.brandId);
   return {a,sec,b,bid:b?b.id:(a?'':null)};
 }
-function renderSide(){
-  const {a,sec,b,bid}=sideCtx();
-  const item=(href,icon,label,on,extra='',cls='')=>`<a class="nav-item ${cls} ${on?'active':''}" href="${href}">${icon}<span class="h">${label}</span>${extra}</a>`;
-  const cnt=x=>({camps:acctCamps(x).length,content:S.clips.filter(c=>c.accountId===x.id).length,res:S.resources.filter(r=>r.accountId===x.id&&!r.campaignId).length});
-  const due=ids=>TODOS.filter(t=>ids.includes(t.acct)).length;
-  const acctRow=x=>{const open=a&&a.id===x.id;const c=cnt(x);const d=due([x.id]);
-    return `<a class="nav-item nav-acct ${open?'open':''} ${open&&sec===''?'active':''}" href="#/acct/${x.id}">${pb(x.platform,'xs')}<span class="h">${esc(x.handle)}</span>${x.monetized==='Paid'?'<span class="star" title="Paid">★</span>':''}${d&&!open?`<span class="c w">${d}</span>`:''}</a>
-    ${open?`<div class="nav-sub">${ASEC.filter(([k])=>k).map(([k,l])=>item(`#/acct/${x.id}/${k}`,IC[k],l,sec===k,c[k]!=null?`<span class="c">${c[k]}</span>`:'')).join('')}</div>`:''}`};
-  const unb=brandAccts('');
-  document.getElementById('side').innerHTML=`
-  <div class="sb-add" id="sbAdd">
-    <button class="sb-add-btn" onclick="toggleAdd(event)">${svg('<path d="M12 5v14M5 12h14"/>')}Add</button>
+function renderHdr(){
+  const {a,b}=sideCtx();
+  const on=vs=>vs.includes(R.v)?'on':'';
+  document.getElementById('hnav').innerHTML=`<a class="${on(['accts','brand','acct','camp','camps'])}" href="#/accts">Dashboard</a><a class="${on(['caps'])}" href="#/caps">Captions</a><a class="${on(['play'])}" href="#/play">Playbook</a><a class="${on(['settings'])}" href="#/settings">Settings</a>`;
+  document.getElementById('sbAdd').innerHTML=`<button class="addbtn" onclick="toggleAdd(event)" aria-label="Add">${svg('<path d="M12 5v14M5 12h14"/>')}<span class="word">Add</span></button>
     <div class="dd-menu">
       <button class="dd-opt" onclick="addPick(()=>editClip())">New clip<small>One moment to edit and post</small></button>
       <button class="dd-opt" onclick="addPick(bulkAdd)">Bulk add moments<small>Paste timestamps from Opus Clip</small></button>
       <button class="dd-opt" onclick="addPick(()=>editCamp(null,${a?`{accountIds:['${a.id}']}`:'null'}))">New campaign<small>${a?`Linked to ${esc(a.handle)}`:'From Whop, Duzlo or anywhere'}</small></button>
       <button class="dd-opt" onclick="addPick(()=>editAcct())">New account<small>${b?`Under ${esc(b.name)}`:'TikTok, YouTube, Instagram or X'}</small></button>
       <button class="dd-opt" onclick="addPick(()=>editBrand())">New brand<small>Groups a set of social accounts</small></button>
-    </div>
-  </div>
-  <nav>
-    ${item('#/accts',IC.dash,'Dashboard',R.v==='accts',TODOS.length?`<span class="c">${TODOS.length}</span>`:'')}
-    <div class="nav-lbl">Brands</div>
-    ${S.brands.map(x=>{const open=bid===x.id;const as=brandAccts(x.id);const d=due(as.map(y=>y.id));
-      return `<a class="nav-item nav-acct ${open?'open':''} ${R.v==='brand'&&open?'active':''}" href="#/brand/${x.id}">${blogo(x,'xs')}<span class="h">${esc(x.name)}</span>${d&&!open?`<span class="c w">${d}</span>`:`<span class="c">${as.length}</span>`}</a>
-      ${open?`<div class="nav-sub">${as.map(acctRow).join('')||'<div class="muted small" style="padding:6px 10px">No accounts yet</div>'}</div>`:''}`}).join('')}
-    ${unb.length?`<a class="nav-item nav-acct muted ${bid===''?'open':''}" href="#/accts">${svg('<circle cx="12" cy="12" r="9"/><path d="M9 12h6"/>')}<span class="h">No brand</span><span class="c">${unb.length}</span></a>
-      ${bid===''?`<div class="nav-sub">${unb.map(acctRow).join('')}</div>`:''}`:''}
-    ${S.brands.length?'':`<a class="nav-item" href="javascript:void 0" onclick="editBrand()"><span class="h muted">+ Create your first brand</span></a>`}
-    <div class="nav-sep"></div>
-    ${item('#/camps',IC.allcamps,'All campaigns',R.v==='camps')}
-    ${item('#/caps',IC.caps,'Captions',R.v==='caps')}
-    ${item('#/play',IC.play,'Playbook',R.v==='play')}
-    ${item('#/settings',IC.settings,'Settings',R.v==='settings')}
-  </nav>
-  <div class="side-foot">
-    <div class="nav-lbl" style="margin:0 2px 8px">Backup</div>
-    <button class="btn sm" onclick="exportJSON()">↓ Export backup</button>
-    <label class="btn sm">↑ Import backup<input type="file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"></label>
-  </div>`;
+    </div>`;
 }
 function toggleAdd(ev){ev.stopPropagation();document.getElementById('sbAdd').classList.toggle('open')}
-function addPick(fn){document.getElementById('sbAdd').classList.remove('open');closeSide();fn()}
+function addPick(fn){document.getElementById('sbAdd').classList.remove('open');fn()}
 document.addEventListener('click',()=>{const m=document.getElementById('sbAdd');if(m)m.classList.remove('open')});
-const mobile=()=>window.innerWidth<=768;
-function toggleSide(){
-  if(!mobile()){const c=document.body.classList.toggle('sb-collapsed');try{localStorage.setItem(LS_KEY+'.sb',c?'1':'')}catch(e){}return}
-  const open=!document.getElementById('side').classList.contains('open');
-  document.getElementById('side').classList.toggle('open',open);document.getElementById('sideBd').classList.toggle('open',open);
-}
-function closeSide(){document.getElementById('side').classList.remove('open');document.getElementById('sideBd').classList.remove('open')}
-try{if(localStorage.getItem(LS_KEY+'.sb'))document.body.classList.add('sb-collapsed')}catch(e){}
+
 
 /* ---------- generic form modal ---------- */
 let FORM=null;
@@ -833,13 +786,14 @@ function vAccts(){
     <div class="stack">
       <div class="brands">${S.brands.map(brandCard).join('')}<button class="addcard slim" onclick="editBrand()">+ New brand</button></div>
       ${unb.length?`<div class="sec-h"><h2>Accounts without a brand</h2><span class="muted small">Edit an account to put it under a brand</span></div><div class="grid g3">${unb.map(acctCard).join('')}</div>`:''}
-      ${loose.length?`<a class="card row between" href="#/camps" style="text-decoration:none;color:inherit"><span>${loose.length} campaign${loose.length===1?' isn\'t':'s aren\'t'} linked to an account yet</span><span class="btn sm">Review ›</span></a>`:''}
     </div>
     <aside class="card"><div class="row between" style="margin-bottom:6px"><h3>Today</h3><span class="chip">${TODOS.length}</span></div>
       ${TODOS.length?TODOS.slice(0,12).map(todoRow).join(''):`<div class="muted small" style="padding:10px 0">Nothing due. Go find moments.</div>`}
       ${TODOS.length>12?`<div class="muted small" style="padding-top:8px">+${TODOS.length-12} more</div>`:''}
     </aside>
   </div>
+  ${loose.length?`<a class="card row between" href="#/camps" style="text-decoration:none;color:inherit"><span>${loose.length} campaign${loose.length===1?' isn\'t':'s aren\'t'} linked to an account yet</span><span class="btn sm">Review ›</span></a>`:''}
+  ${S.accounts.length||S.campaigns.length?brandPanels({name:'all your brands'},S.accounts,S.clips,S.campaigns):''}
   ${S.brands.length+S.accounts.length===0?`<div class="card stack"><h3>Get started</h3>
     <div class="muted">1. Create a brand (like Edge Clips). 2. Add its TikTok, YouTube, Instagram and X accounts — tag pre-monetized ones as Paid. 3. Log follower counts weekly to watch them climb. 4. Open an account to run its campaigns, content and review.</div>
     <div class="row"><button class="btn primary" onclick="editBrand()">Create first brand</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
@@ -879,9 +833,9 @@ function brandOps(b,as,cs){
     ${tile('Campaigns',`${active.length} active`,low?`Lowest budget: ${esc(low.name)} ${num(low.budgetLeft)}%`:`${camps.filter(k=>k.status==='Scouting').length} scouting`)}
   </div>`;
 }
-function brandPanels(b,as,cs){
-  const camps=brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3},ids=new Set(as.map(a=>a.id));
-  return `<div class="card"><div class="row between" style="margin-bottom:8px"><div><h3>Campaigns</h3><div class="muted small">Every campaign running on ${esc(b.name)}'s accounts.</div></div><button class="btn sm primary" onclick="editCamp()">+ Campaign</button></div>
+function brandPanels(b,as,cs,allCamps){
+  const camps=allCamps||brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3},ids=new Set(as.map(a=>a.id));
+  return `<div class="card"><div class="row between" style="margin-bottom:8px"><div><h3>Campaigns</h3><div class="muted small">Every campaign running on ${esc(b.name)}${allCamps?'':'\'s accounts'}.</div></div><button class="btn sm primary" onclick="editCamp()">+ Campaign</button></div>
     ${camps.length?`<div class="tw"><table><thead><tr><th>Campaign</th><th>Status</th><th class="num">Rate</th><th>Budget left</th><th>Accounts</th><th class="num">Ready</th><th class="num">Live</th><th class="num">Est. $</th><th>Last submit</th></tr></thead><tbody>
     ${[...camps].sort((x,y)=>(order[x.status]??9)-(order[y.status]??9)).map(k=>{const kc=cs.filter(c=>c.campaignId===k.id);const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
       const ls=kc.map(c=>c.submittedAt).filter(Boolean).sort().pop();const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';
@@ -960,6 +914,7 @@ function vAcct(id,sec){
   const a=acct(id);if(!a)return `<div class="empty">That account doesn't exist anymore. <a href="#/accts">Back to accounts</a></div>`;
   if(!ASEC.some(([k])=>k===sec))sec='';
   const url=safeUrl(a.url);
+  const cnt={camps:acctCamps(a).length,content:S.clips.filter(c=>c.accountId===a.id).length,res:S.resources.filter(r=>r.accountId===a.id&&!r.campaignId).length};
   const body={'':acctOverview,camps:acctCampsSec,content:contentSec,review:reviewSec,res:a=>resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}[sec](a);
   return `<div class="stack">
   <div class="crumbs"><a href="#/accts">Brands</a><span>/</span>${brand(a.brandId)?`<a href="#/brand/${a.brandId}">${esc(brand(a.brandId).name)}</a><span>/</span>`:''}${sec?`<a href="#/acct/${a.id}">${esc(a.handle)}</a><span>/</span><span>${ASEC.find(([k])=>k===sec)[1]}</span>`:`<span>${esc(a.handle)}</span>`}</div>
@@ -969,7 +924,7 @@ function vAcct(id,sec){
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
     <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open profile ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
-  ${sec?`<h2 style="margin-top:6px">${ASEC.find(([k])=>k===sec)[1]}</h2>`:''}
+  <nav class="atabs">${ASEC.map(([k,l])=>`<a class="${k===sec?'on':''}" href="#/acct/${a.id}${k?'/'+k:''}">${IC[k]}${l}${cnt[k]!=null?`<span class="c">${cnt[k]}</span>`:''}</a>`).join('')}</nav>
   ${body}
   </div>`;
 }
