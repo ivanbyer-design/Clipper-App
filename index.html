@@ -32,23 +32,14 @@ h3{font-size:16px}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top{max-width:1240px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;gap:12px}
+.top{max-width:1240px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
 .logo{display:flex;align-items:center;gap:8px;font-family:"Space Grotesk";font-weight:700;font-size:20px;color:var(--text);text-decoration:none}
 .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:15px}
 .top .spacer{flex:1}
-.navrow{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:8px 16px 0;overflow-x:auto;scrollbar-width:none}
-.navrow::-webkit-scrollbar{display:none}
-.flow{display:flex;align-items:center;gap:2px}
-.fl{display:flex;align-items:center;gap:7px;color:var(--muted);font:600 14px Inter;padding:9px 10px 11px;border-bottom:2px solid transparent;text-decoration:none;white-space:nowrap}
-.fl .n{width:20px;height:20px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font:700 11px "Space Grotesk"}
-.fl:hover{color:var(--text)}
-.fl.on{color:var(--text);border-bottom-color:var(--accent)}
-.fl.on .n{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.flow .sep{color:var(--line);font-size:18px;padding-bottom:2px}
-.tools{margin-left:auto;display:flex;gap:2px}
-.tools a{color:var(--muted);font:600 13px Inter;padding:9px 9px 11px;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.tools{display:flex;gap:2px;margin-left:12px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.tools a{color:var(--muted);font:600 14px Inter;padding:6px 10px;text-decoration:none;border-radius:8px;white-space:nowrap}
 .tools a:hover{color:var(--text)}
-.tools a.on{color:var(--text);border-bottom-color:var(--muted)}
+.tools a.on{color:var(--text);background:var(--panel2)}
 main{max-width:1240px;margin:0 auto;padding:20px 16px 80px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .nowrap{flex-wrap:nowrap}
@@ -178,6 +169,31 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .insight:first-child{border-top:0}
 .insight .i{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;background:var(--accent-soft);color:var(--accent)}
 .insight .i.w{background:var(--gold-soft);color:var(--warn)}
+/* account hub tabs */
+.atabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.atabs::-webkit-scrollbar{display:none}
+.atabs a{color:var(--muted);font:600 14px Inter;padding:10px 12px;border-bottom:2px solid transparent;text-decoration:none;white-space:nowrap;margin-bottom:-1px}
+.atabs a:hover{color:var(--text)}
+.atabs a.on{color:var(--text);border-bottom-color:var(--accent)}
+.atabs .c{font-size:11px;margin-left:6px;padding:1px 6px;border-radius:99px;background:var(--panel2);color:var(--muted)}
+.flash{animation:flash 1.8s ease-out 1;border-radius:10px}
+@keyframes flash{0%,45%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+/* pomodoro drawer */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:340px;max-width:100vw;background:var(--panel);border-left:1px solid var(--line);z-index:40;transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column;box-shadow:var(--shadow);visibility:hidden}
+.drawer.open{transform:none;visibility:visible}
+.drawer .hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.drawer .bd{padding:16px;overflow-y:auto;flex:1}
+.ring{position:relative;width:220px;height:220px;margin:4px auto}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring circle{transition:stroke-dashoffset .5s linear}
+.ring .t{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .t b{font:700 46px "Space Grotesk";font-variant-numeric:tabular-nums}
+.tomatoes{display:flex;gap:6px;flex-wrap:wrap}
+.tomatoes i{width:14px;height:14px;border-radius:50%;background:var(--panel2);border:1px solid var(--line)}
+.tomatoes i.on{background:var(--bad);border-color:var(--bad)}
+.pomo-btn{font-variant-numeric:tabular-nums}
+.pomo-btn.run{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+@media (min-width:1260px){body.pomo-open{padding-right:340px}}
 @media (max-width:900px){
   .dash{grid-template-columns:minmax(0,1fr)}
   .dash aside{position:static}
@@ -185,6 +201,9 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 @media (max-width:600px){
   .tile .v{font-size:22px}
   .top .hide-m{display:none}
+  .tools{margin-left:0}
+  .tools a{padding:6px 7px;font-size:13px}
+  .logo .word{display:none}
   .paste{grid-template-columns:1fr}
   .stats b{font-size:15px}
 }
@@ -193,21 +212,21 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 <body>
 <header>
   <div class="top">
-    <a class="logo" href="#/accts"><span class="mark">✂</span>Clipper</a>
+    <a class="logo" href="#/accts"><span class="mark">✂</span><span class="word">Clipper</span></a>
+    <nav class="tools" id="nav"></nav>
     <div class="spacer"></div>
     <span class="muted small hide-m" id="todayLbl"></span>
+    <button class="btn sm pomo-btn" id="pomoBtn" onclick="togglePomo()" aria-label="Focus timer">⏱ Focus</button>
     <button class="btn primary sm" onclick="editClip()">+ Clip</button>
   </div>
-  <div class="navrow" id="nav"></div>
 </header>
 <main id="view"></main>
 <div class="toast" id="toast"></div>
+<aside class="drawer" id="pomo" aria-label="Focus timer"></aside>
 
 <script>
 /* ---------- constants ---------- */
 const LS_KEY='clipper.v1';
-const FLOW=[['accts','Accounts',['accts','acct']],['camps','Campaigns',['camps','camp']],['content','Content',['content']],['review','Review',['review']]];
-const TOOLS=[['caps','Captions'],['play','Playbook'],['settings','Settings']];
 const STAGES=['Idea','Editing','Ready','Posted','Submitted','Approved','Paid','Rejected'];
 const PLATFORMS=['TikTok','YouTube','Instagram','X'];
 const PSHORT={TikTok:'TT',YouTube:'YT',Instagram:'IG',X:'𝕏'};
@@ -296,21 +315,43 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied')}catch(_){toast('Copy failed')}ta.remove()}}
 
 /* ---------- routing ---------- */
-const VIEWS={accts:()=>vAccts(),acct:()=>vAcct(R.id),camps:()=>vCamps(),camp:()=>vCamp(R.id),content:()=>vContent(),review:()=>vReview(),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
-function parseHash(){const [v,id]=location.hash.replace(/^#\/?/,'').split('/');R={v:VIEWS[v]?v:'accts',id:id||''}}
-function go(v,id){const h='#/'+v+(id?'/'+id:'');if(location.hash===h)render();else location.hash=h}
-window.addEventListener('hashchange',()=>{parseHash();render();window.scrollTo(0,0)});
+const VIEWS={accts:()=>vAccts(),acct:()=>vAcct(R.id,R.sec),camps:()=>vCamps(),camp:()=>vCamp(R.id),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
+const NAV=[['accts','Accounts',['accts','acct','camps','camp']],['caps','Captions',['caps']],['play','Playbook',['play']],['settings','Settings',['settings']]];
+function parseHash(){const [v,id,sec]=location.hash.replace(/^#\/?/,'').split('/');R={v:VIEWS[v]?v:'accts',id:id||'',sec:sec||''}}
+function go(v,id,sec){const h='#/'+[v,id,sec].filter(Boolean).join('/');if(location.hash===h)render();else location.hash=h}
+window.addEventListener('hashchange',()=>{parseHash();window.scrollTo(0,0);render()});
 function renderNav(){
-  const flow=FLOW.map(([k,l,vs],i)=>`<a class="fl ${vs.includes(R.v)?'on':''}" href="#/${k}"><span class="n">${i+1}</span>${l}</a>`).join('<span class="sep">›</span>');
-  const tools=TOOLS.map(([k,l])=>`<a class="${R.v===k?'on':''}" href="#/${k}">${l}</a>`).join('');
-  document.getElementById('nav').innerHTML=`<nav class="flow">${flow}</nav><div class="tools">${tools}</div>`;
+  document.getElementById('nav').innerHTML=NAV.map(([k,l,vs])=>`<a class="${vs.includes(R.v)?'on':''}" href="#/${k}">${l}</a>`).join('');
 }
+let TODOS=[];
+let FOCUS=null;
 function render(){
-  MED=medViews();
+  TODOS=todos();
+  const a=R.v==='acct'&&acct(R.id);
+  if(a&&CF.acct!==a.id){CF.acct=a.id;CF.camp=''}
+  MED=a?median(S.clips.filter(c=>c.accountId===a.id&&isPosted(c)).map(views).filter(Boolean)):medViews();
   renderNav();
   document.getElementById('todayLbl').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
   document.getElementById('view').innerHTML=VIEWS[R.v]();
   if(R.v==='caps')capPreview();
+  applyFocus();
+}
+/* jump from a to-do to the place in the account where it gets done */
+function doTodo(i){
+  const t=TODOS[i];if(!t)return;
+  if(!t.to){t.fn();return}
+  FOCUS=t.focus||null;
+  if(FOCUS&&FOCUS.clip){CF.mode='board';CF.camp=''}
+  go(...t.to);
+}
+function applyFocus(){
+  if(!FOCUS)return;const f=FOCUS;FOCUS=null;
+  requestAnimationFrame(()=>{
+    const el=f.sel&&document.querySelector(f.sel);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
+    if(f.clip)setTimeout(()=>{editClip(f.clip);const inp=document.getElementById('f_'+f.field);
+      if(inp){inp.scrollIntoView({block:'center'});inp.focus();inp.parentElement.classList.add('flash')}},el?500:0);
+  });
 }
 
 /* ---------- generic form modal ---------- */
@@ -390,9 +431,8 @@ function stageSideEffects(c){
   return c;
 }
 function ctxPreset(){
-  if(R.v==='acct')return {accountId:R.id};
+  if(R.v==='acct')return {accountId:R.id,campaignId:R.sec==='content'?CF.camp:''};
   if(R.v==='camp'){const k=camp(R.id);return {campaignId:R.id,accountId:k&&k.accountIds.length===1?k.accountIds[0]:''}}
-  if(R.v==='content')return {accountId:CF.acct,campaignId:CF.camp};
   return {};
 }
 function editClip(id,preset){
@@ -433,7 +473,7 @@ const CAMP_FIELDS=[
 function editCamp(id,preset){
   const c=id?S.campaigns.find(x=>x.id===id):{id:uid(),marketplace:MARKETS[0],status:'Scouting',platforms:[...PLATFORMS],checks:[],accountIds:[],...(preset||{})};
   openForm(id?'Edit campaign':'New campaign',CAMP_FIELDS,c,o=>{if(!o.name)o.name='Untitled campaign';upsert(S.campaigns,o)},
-    id?()=>{S.campaigns=S.campaigns.filter(x=>x.id!==id);S.clips.forEach(k=>{if(k.campaignId===id)k.campaignId=''});S.resources=S.resources.filter(r=>r.campaignId!==id);if(R.v==='camp')go('camps')}:null);
+    id?()=>{S.campaigns=S.campaigns.filter(x=>x.id!==id);S.clips.forEach(k=>{if(k.campaignId===id)k.campaignId=''});S.resources=S.resources.filter(r=>r.campaignId!==id);if(R.v==='camp'){const aid=c.accountIds.find(acct);aid?go('acct',aid,'camps'):go('accts')}}:null);
 }
 const ACCT_FIELDS=[
   {k:'platform',label:'Platform',type:'select',options:PLATFORMS},
@@ -458,22 +498,26 @@ const tile=(k,v,s)=>`<div class="card tile"><div class="k">${k}</div><div class=
 /* ---------- 1. Accounts dashboard ---------- */
 function todos(){
   const t=[];
+  const clipTask=(c,d,title,sub,field)=>{const a=acct(c.accountId);
+    t.push({acct:c.accountId,d,t:`${title}: ${c.title}`,s:sub+(a?` · ${a.handle}`:''),
+      to:a?['acct',a.id,'content']:null,focus:{sel:'#k-'+c.id,clip:c.id,field},fn:()=>editClip(c.id,null,field)})};
   S.clips.forEach(c=>{
-    const a=acct(c.accountId),on=a?` · ${a.handle}`:'';
-    if(c.stage==='Ready'&&(!c.scheduledFor||c.scheduledFor<=today()))t.push({d:'',t:`Post: ${c.title}`,s:(c.scheduledFor?'Scheduled '+c.scheduledFor:'Ready to go')+on,fn:`editClip('${c.id}')`});
-    if(c.stage==='Posted')t.push({d:'w',t:`Submit to campaign: ${c.title}`,s:'Submit right after posting'+on,fn:`editClip('${c.id}')`});
+    if(c.stage==='Ready'&&(!c.scheduledFor||c.scheduledFor<=today()))clipTask(c,'','Post',c.scheduledFor?'Scheduled '+c.scheduledFor:'Ready to go','postUrl');
+    if(c.stage==='Posted')clipTask(c,'w','Submit to campaign','Submit right after posting','stage');
     const da=daysAgo(c.postedAt);
-    if(isPosted(c)&&da>=2&&!c.views48)t.push({d:'',t:`Log 48h views: ${c.title}`,s:`Posted ${da} days ago${on}`,fn:`editClip('${c.id}')`});
-    if(isPosted(c)&&da>=7&&!c.views7)t.push({d:'',t:`Log 7-day views: ${c.title}`,s:`Posted ${da} days ago${on}`,fn:`editClip('${c.id}')`});
-    if(c.stage==='Approved'&&c.submittedAt&&daysAgo(c.submittedAt)>=12)t.push({d:'w',t:`Check payout: ${c.title}`,s:'Should have settled by now',fn:`editClip('${c.id}')`});
+    if(isPosted(c)&&da>=2&&!c.views48)clipTask(c,'','Log 48h views',`Posted ${da} days ago`,'views48');
+    if(isPosted(c)&&da>=7&&!c.views7)clipTask(c,'','Log 7-day views',`Posted ${da} days ago`,'views7');
+    if(c.stage==='Approved'&&c.submittedAt&&daysAgo(c.submittedAt)>=12)clipTask(c,'w','Check payout','Should have settled by now','paid');
   });
-  S.campaigns.filter(k=>k.status==='Active'&&k.budgetLeft!==''&&k.budgetLeft!=null&&num(k.budgetLeft)<20).forEach(k=>t.push({d:'b',t:`Budget low: ${k.name}`,s:`${num(k.budgetLeft)}% left — update or switch campaigns`,fn:`go('camp','${k.id}')`}));
+  S.campaigns.filter(k=>k.status==='Active'&&k.budgetLeft!==''&&k.budgetLeft!=null&&num(k.budgetLeft)<20).forEach(k=>{const aid=k.accountIds.find(acct);
+    t.push({acct:aid||'',d:'b',t:`Budget low: ${k.name}`,s:`${num(k.budgetLeft)}% left — update or switch campaigns`,to:aid?['acct',aid,'camps']:['camp',k.id],focus:{sel:'#c-'+k.id}})});
   S.accounts.forEach(a=>{
-    if(a.status==='Warming up')t.push({d:'',t:`Warm-up: ${a.handle} (${a.platform})`,s:`${(a.warmup||[]).length}/${WARMUP.length} steps done`,fn:`editAcct('${a.id}')`});
-    else if(a.status==='Active'&&!acctCamps(a).length)t.push({d:'w',t:`No campaign on ${a.handle}`,s:'Link a campaign so posts earn',fn:`go('acct','${a.id}')`});
+    if(a.status==='Warming up')t.push({acct:a.id,d:'',t:`Warm-up: ${a.handle} (${a.platform})`,s:`${(a.warmup||[]).length}/${WARMUP.length} steps done`,to:['acct',a.id],focus:{sel:'#warm'}});
+    else if(a.status==='Active'&&!acctCamps(a).length)t.push({acct:a.id,d:'w',t:`No campaign on ${a.handle}`,s:'Link a campaign so posts earn',to:['acct',a.id,'camps'],focus:{sel:'#campadd'}});
   });
   return t;
 }
+const todoRow=(t,i)=>`<div class="todo" onclick="doTodo(${i})"><span class="dot ${t.d}"></span><div><div>${esc(t.t)}</div><div class="muted small">${esc(t.s)}</div></div></div>`;
 function vAccts(){
   const posted=S.clips.filter(isPosted);
   const td=posted.filter(c=>c.postedAt===today()).length,dt=num(S.settings.dailyTarget);
@@ -486,12 +530,12 @@ function vAccts(){
   const filters=[['all','All'],...PLATFORMS.map(p=>[p,p]),['Paid','★ Paid'],['Unpaid','Unpaid']];
   const list=S.accounts.filter(a=>acctFilter==='all'||a.platform===acctFilter||a.monetized===acctFilter)
     .sort((a,b)=>(b.monetized==='Paid')-(a.monetized==='Paid')||PLATFORMS.indexOf(a.platform)-PLATFORMS.indexOf(b.platform));
-  const td_=todos();
+  const loose=S.campaigns.filter(k=>!k.accountIds.some(acct));
   return `<div class="stack">
-  <div class="row between"><div><h1>Accounts</h1><div class="muted small">Every page you run. Open one to see its campaigns, resources and content.</div></div>
+  <div class="row between"><div><h1>Accounts</h1><div class="muted small">Every page you run. Open one for its campaigns, content, review and resources.</div></div>
     <button class="btn primary" onclick="editAcct()">+ Account</button></div>
   <div class="grid g4">
-    ${tile('Accounts',S.accounts.length,`${paidN} paid · ${S.accounts.length-paidN} not monetized`)}
+    ${tile('Accounts',S.accounts.length,`${paidN} paid · ${S.accounts.length-paidN} unpaid`)}
     ${tile('Followers',fmtN(fol),'across all pages')}
     ${tile('Posted today',`${td} / ${dt}`,`<div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,dt?td/dt*100:0)}%"></i></div>`)}
     ${tile('Streak',`${st} day${st===1?'':'s'}`,st?'Keep it alive — post today':'Post today to start one')}
@@ -501,37 +545,39 @@ function vAccts(){
     <div class="stack">
       <div class="row">${filters.map(([k,l])=>`<span class="chip click ${acctFilter===k?'on':''}" onclick="acctFilter='${k}';render()">${l} ${counts[k]}</span>`).join('')}</div>
       <div class="grid g3">${list.map(acctCard).join('')}<button class="addcard" onclick="editAcct()">+ Add account</button></div>
+      ${loose.length?`<a class="card row between" href="#/camps" style="text-decoration:none;color:inherit"><span>${loose.length} campaign${loose.length===1?' isn\'t':'s aren\'t'} linked to an account yet</span><span class="btn sm">Review ›</span></a>`:''}
     </div>
-    <aside class="card"><div class="row between" style="margin-bottom:6px"><h3>Today</h3><span class="chip">${td_.length}</span></div>
-      ${td_.length?td_.slice(0,12).map(t=>`<div class="todo" onclick="${t.fn}"><span class="dot ${t.d}"></span><div><div>${esc(t.t)}</div><div class="muted small">${esc(t.s)}</div></div></div>`).join(''):`<div class="muted small" style="padding:10px 0">Nothing due. Go find moments.</div>`}
-      ${td_.length>12?`<div class="muted small" style="padding-top:8px">+${td_.length-12} more</div>`:''}
+    <aside class="card"><div class="row between" style="margin-bottom:6px"><h3>Today</h3><span class="chip">${TODOS.length}</span></div>
+      ${TODOS.length?TODOS.slice(0,12).map(todoRow).join(''):`<div class="muted small" style="padding:10px 0">Nothing due. Go find moments.</div>`}
+      ${TODOS.length>12?`<div class="muted small" style="padding-top:8px">+${TODOS.length-12} more</div>`:''}
     </aside>
   </div>
   ${S.accounts.length+S.campaigns.length+S.clips.length===0?`<div class="card stack"><h3>Get started</h3>
-    <div class="muted">1. Add your TikTok, YouTube, Instagram and X accounts — tag the pre-monetized ones as Paid. 2. Open an account and add the campaigns it runs. 3. Paste your source links and drive folders as resources. 4. Move clips through Content, then check Review weekly.</div>
+    <div class="muted">1. Add your TikTok, YouTube, Instagram and X accounts — tag the pre-monetized ones as Paid. 2. Open an account and add the campaigns it runs. 3. Paste your source links and drive folders into its Resources. 4. Move clips through its Content board, then check its Review weekly.</div>
     <div class="row"><button class="btn primary" onclick="editAcct()">Add first account</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
   </div>`;
 }
 function acctCard(a){
   const s=acctStats(a);const w=(a.warmup||[]).length;
   const stc={Active:'a','Warming up':'w',Paused:'',Flagged:'b'}[a.status]||'';
-  const cost=num(a.cost);
+  const cost=num(a.cost);const due=TODOS.filter(t=>t.acct===a.id).length;
   return `<div class="acard" style="--pc:${PCOLOR[a.platform]||'var(--line)'}" onclick="go('acct','${a.id}')">
     <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div>${mtag(a)}</div>
     <div class="stats"><div><div class="l">Followers</div><b>${fmtN(num(a.followers))}</b></div><div><div class="l">Camps</div><b>${s.camps}</b></div><div><div class="l">Posted</div><b>${s.posted}</b></div><div><div class="l">Views</div><b>${fmtN(s.views)}</b></div></div>
     ${a.monetized==='Paid'&&cost?`<div><div class="row between small muted"><span>Paid back</span><span>${fmt$(s.earned)} / ${fmt$(cost)}</span></div><div class="bar gold"><i style="width:${Math.min(100,s.earned/cost*100)}%"></i></div></div>`:''}
     ${a.status==='Warming up'?`<div><div class="row between small muted"><span>Warm-up</span><span>${w}/${WARMUP.length}</span></div><div class="bar"><i style="width:${w/WARMUP.length*100}%"></i></div></div>`:''}
-    <div class="row between"><span class="chip ${stc}">${esc(a.status)}</span><span class="small muted">${fmt$(s.earned)} earned</span></div>
+    <div class="row between"><span class="chip ${stc}">${esc(a.status)}</span><span class="small muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(s.earned)} earned</span></div>
   </div>`;
 }
 
-/* ---------- account detail ---------- */
-function vAcct(id){
+/* ---------- account hub ---------- */
+const ASEC=[['','Overview'],['camps','Campaigns'],['content','Content'],['review','Review'],['res','Resources']];
+function vAcct(id,sec){
   const a=acct(id);if(!a)return `<div class="empty">That account doesn't exist anymore. <a href="#/accts">Back to accounts</a></div>`;
-  const s=acctStats(a);const camps=acctCamps(a);const cost=num(a.cost);
-  const others=S.campaigns.filter(k=>!camps.includes(k));
-  const clips=S.clips.filter(c=>c.accountId===a.id).sort((x,y)=>String(y.postedAt||y.createdAt||'').localeCompare(String(x.postedAt||x.createdAt||'')));
+  if(!ASEC.some(([k])=>k===sec))sec='';
   const url=safeUrl(a.url);
+  const cnt={camps:acctCamps(a).length,content:S.clips.filter(c=>c.accountId===a.id).length,res:S.resources.filter(r=>r.accountId===a.id&&!r.campaignId).length};
+  const body={'':acctOverview,camps:acctCampsSec,content:contentSec,review:reviewSec,res:a=>resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}[sec](a);
   return `<div class="stack">
   <div class="crumbs"><a href="#/accts">Accounts</a><span>/</span><span>${esc(a.handle)}</span></div>
   <div class="card hero" style="border-top:3px solid ${PCOLOR[a.platform]}">
@@ -540,24 +586,40 @@ function vAcct(id){
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
     <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open profile ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
-  <div class="grid g4">
+  <nav class="atabs">${ASEC.map(([k,l])=>`<a class="${k===sec?'on':''}" href="#/acct/${a.id}${k?'/'+k:''}">${l}${cnt[k]!=null?`<span class="c">${cnt[k]}</span>`:''}</a>`).join('')}</nav>
+  ${body}
+  </div>`;
+}
+function acctOverview(a){
+  const s=acctStats(a);const cost=num(a.cost);const w=a.warmup||[];
+  const mine=TODOS.map((t,i)=>[t,i]).filter(([t])=>t.acct===a.id);
+  const camps=acctCamps(a);
+  return `<div class="grid g4">
     ${tile('Followers',fmtN(num(a.followers)),'update weekly')}
     ${tile('Clips posted',s.posted,`${s.clips-s.posted} in progress`)}
     ${tile('Views',fmtN(s.views),s.posted?`${fmtN(s.views/s.posted)} avg per clip`:'—')}
     ${a.monetized==='Paid'&&cost?tile('Payback',Math.round(s.earned/cost*100)+'%',`${fmt$(s.earned)} of ${fmt$(cost)} earned back`):tile('Est. earnings',fmt$(s.earned),'from campaign rates')}
   </div>
-
-  <div class="sec-h"><h2>Campaigns</h2><div class="row">
-    ${others.length?`<select class="inline" onchange="if(this.value)linkCamp('${a.id}',this.value)"><option value="">Link existing…</option>${others.map(k=>`<option value="${k.id}">${esc(k.name)}</option>`).join('')}</select>`:''}
+  <div class="grid g2">
+    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do on ${esc(a.handle)}</h3><span class="chip">${mine.length}</span></div>
+      ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due on this account.</div>'}</div>
+    ${a.status==='Warming up'?`<div class="card" id="warm"><div class="row between" style="margin-bottom:10px"><h3>Warm-up</h3><span class="chip ${w.length===WARMUP.length?'g':'w'}">${w.length}/${WARMUP.length}</span></div>
+      <div class="checks">${WARMUP.map((x,i)=>`<label><input type="checkbox" ${w.includes(x)?'checked':''} onchange="toggleWarm('${a.id}',${i})">${esc(x)}</label>`).join('')}</div>
+      ${w.length===WARMUP.length&&a.status==='Warming up'?`<div style="margin-top:12px"><button class="btn primary sm" onclick="setStatus('${a.id}','Active')">Mark account Active</button></div>`:''}</div>`
+    :`<div class="card"><div class="row between" style="margin-bottom:6px"><h3>Campaigns</h3><a class="btn sm" href="#/acct/${a.id}/camps">Manage</a></div>
+      ${camps.length?camps.map(k=>`<div class="todo" onclick="go('camp','${k.id}')"><span class="dot ${k.status==='Active'?'':'w'}"></span><div><div>${esc(k.name)}</div><div class="muted small">${esc(k.status)}${k.cpm?` · $${num(k.cpm).toFixed(2)}/1K`:''}</div></div></div>`).join(''):'<div class="muted small" style="padding:10px 0">No campaigns yet.</div>'}</div>`}
+  </div>
+  ${a.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(a.notes)}</div></div>`:''}`;
+}
+function toggleWarm(aid,i){const a=acct(aid);const x=WARMUP[i];a.warmup=a.warmup||[];
+  if(a.warmup.includes(x))a.warmup=a.warmup.filter(y=>y!==x);else a.warmup.push(x);save();render()}
+function setStatus(aid,st){acct(aid).status=st;save();render();toast(`${acct(aid).handle} is ${st}`)}
+function acctCampsSec(a){
+  const camps=acctCamps(a);const others=S.campaigns.filter(k=>!camps.includes(k));
+  return `<div class="row between"><div class="muted small">Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div>
+    <div class="row" id="campadd">${others.length?`<select class="inline" onchange="if(this.value)linkCamp('${a.id}',this.value)"><option value="">Link existing…</option>${others.map(k=>`<option value="${k.id}">${esc(k.name)}</option>`).join('')}</select>`:''}
     <button class="btn primary" onclick="editCamp(null,{accountIds:['${a.id}']})">+ New campaign</button></div></div>
-  ${camps.length?`<div class="grid g3">${camps.map(k=>campCard(k,a)).join('')}</div>`:`<div class="empty">No campaigns on this account yet. Add the ones you're clipping for.</div>`}
-
-  ${resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}
-
-  <div class="sec-h"><h2>Content</h2><button class="btn" onclick="CF.acct='${a.id}';CF.camp='';go('content')">Open in Content board</button></div>
-  ${clips.length?clipTable(clips,['title','campaign','stage','postedAt','views7','mult','est']):`<div class="empty">No clips for ${esc(a.handle)} yet.</div>`}
-  ${a.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(a.notes)}</div></div>`:''}
-  </div>`;
+  ${camps.length?`<div class="grid g3">${camps.map(k=>campCard(k,a)).join('')}</div>`:`<div class="empty">No campaigns on this account yet. Add the ones you're clipping for.</div>`}`;
 }
 function linkCamp(aid,kid){const k=camp(kid);if(!k)return;if(!k.accountIds.includes(aid))k.accountIds.push(aid);save();render();toast('Campaign linked')}
 function unlinkCamp(aid,kid,ev){ev.stopPropagation();const k=camp(kid);k.accountIds=k.accountIds.filter(x=>x!==aid);save();render();toast('Unlinked')}
@@ -617,7 +679,7 @@ function delRes(id){if(!confirm('Remove this resource?'))return;S.resources=S.re
 function vCamps(){
   const order={Active:0,Scouting:1,Paused:2,Ended:3};
   const list=[...S.campaigns].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
-  return `<div class="stack"><div class="row between"><div><h1>Campaigns</h1><div class="muted small">Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div></div><button class="btn primary" onclick="editCamp()">+ Campaign</button></div>
+  return `<div class="stack"><div class="row between"><div><div class="crumbs" style="margin-bottom:6px"><a href="#/accts">Accounts</a><span>/</span><span>All campaigns</span></div><h1>Campaigns</h1><div class="muted small">Every campaign across your accounts. Link each one to an account so it shows on that account's dashboard. Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div></div><button class="btn primary" onclick="editCamp()">+ Campaign</button></div>
   ${list.length?`<div class="grid g3">${list.map(k=>campCard(k)).join('')}</div>`:`<div class="empty">No campaigns yet. Add the ones you're scouting on Whop or Duzlo — or open an account and add them there.</div>`}</div>`;
 }
 function campCard(k,a){
@@ -628,7 +690,7 @@ function campCard(k,a){
   const sc=campScore(k);const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';
   const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
   const accts=k.accountIds.map(acct).filter(Boolean);
-  return `<div class="card stack" style="cursor:pointer" onclick="go('camp','${k.id}')">
+  return `<div class="card stack" id="c-${k.id}" style="cursor:pointer" onclick="go('camp','${k.id}')">
     <div class="row between nowrap"><h3>${esc(k.name)}</h3><span class="chip ${stc}">${esc(k.status)}</span></div>
     <div class="row small"><span class="chip">${esc(k.marketplace||'')}</span><span class="chip ${sc>=4?'g':sc>=3?'w':'b'}">Score ${sc}/5</span>${k.cpm?`<span class="chip a">$${num(k.cpm).toFixed(2)} / 1K</span>`:''}${k.maxPerClip?`<span class="chip">Cap $${esc(k.maxPerClip)}</span>`:''}</div>
     ${bl!=null?`<div><div class="row between small muted"><span>Budget left</span><span>${bl}%</span></div><div class="bar"><i style="width:${Math.min(100,bl)}%;${bl<20?'background:var(--bad)':''}"></i></div></div>`:''}
@@ -648,7 +710,7 @@ function vCamp(id){
   const brief=safeUrl(k.briefUrl),src=safeUrl(k.sourceUrl);
   const from=accts.length===1?accts[0]:null;
   return `<div class="stack">
-  <div class="crumbs">${from?`<a href="#/accts">Accounts</a><span>/</span><a href="#/acct/${from.id}">${esc(from.handle)}</a>`:`<a href="#/camps">Campaigns</a>`}<span>/</span><span>${esc(k.name)}</span></div>
+  <div class="crumbs">${from?`<a href="#/accts">Accounts</a><span>/</span><a href="#/acct/${from.id}">${esc(from.handle)}</a><span>/</span><a href="#/acct/${from.id}/camps">Campaigns</a>`:`<a href="#/camps">Campaigns</a>`}<span>/</span><span>${esc(k.name)}</span></div>
   <div class="card stack">
     <div class="row between"><div><div class="row"><h1>${esc(k.name)}</h1><span class="chip">${esc(k.status)}</span><span class="chip ${sc>=4?'g':sc>=3?'w':'b'}">Score ${sc}/5</span></div>
       <div class="muted small">${esc(k.marketplace||'')}${k.cpm?` · $${num(k.cpm).toFixed(2)} per 1K views`:''}${k.maxPerClip?` · cap $${esc(k.maxPerClip)}/clip`:''}${k.minViews?` · min ${fmtN(num(k.minViews))} views`:''}</div></div>
@@ -692,7 +754,7 @@ function bulkSave(){
   closeForm();save();render();toast(`Added ${lines.length} clip${lines.length===1?'':'s'}`);
 }
 
-/* ---------- 3. Content ---------- */
+/* ---------- 3. Content (inside an account) ---------- */
 function board(list){
   return `<div class="board">${STAGES.map(s=>{const cs=list.filter(c=>c.stage===s);
     return `<div class="col"><h3><span>${s}</span><span class="muted">${cs.length}</span></h3>
@@ -708,7 +770,7 @@ function kcard(c){
   if(v)metas.push(`<span class="chip ${m>=2?'a':''}">${fmtN(v)} views${m?` · ${m.toFixed(1)}×`:''}</span>`);
   if(est(c))metas.push(`<span class="chip g">${fmt$(est(c))}</span>`);
   const canReject=['Submitted','Approved'].includes(c.stage);
-  return `<div class="kc" onclick="editClip('${c.id}')">${a?`<div style="margin-bottom:6px">${who(a)}</div>`:''}<div class="t">${m>=3?'<span style="color:var(--accent)">★</span> ':''}${esc(c.title)}</div>${c.sourceTs?`<div class="muted small">${esc(c.sourceTs)}</div>`:''}
+  return `<div class="kc" id="k-${c.id}" onclick="editClip('${c.id}')">${a&&R.v!=='acct'?`<div style="margin-bottom:6px">${who(a)}</div>`:''}<div class="t">${m>=3?'<span style="color:var(--accent)">★</span> ':''}${esc(c.title)}</div>${c.sourceTs?`<div class="muted small">${esc(c.sourceTs)}</div>`:''}
   <div class="m">${metas.join('')}</div>
   <div class="mv"><button class="btn sm" onclick="moveClip('${c.id}',-1,event)" aria-label="Back">‹</button>${canReject?`<button class="btn sm danger" onclick="rejectClip('${c.id}',event)">Rejected</button>`:''}<button class="btn sm" onclick="moveClip('${c.id}',1,event)" aria-label="Forward">›</button></div></div>`;
 }
@@ -735,44 +797,42 @@ function clipTable(list,cols){
 }
 function sortBy(k){reviewSort=reviewSort.k===k?{k,d:-reviewSort.d}:{k,d:-1};render()}
 function setMode(m){CF.mode=m;try{localStorage.setItem(LS_KEY+'.cmode',m)}catch(e){}render()}
-function vContent(){
-  const list=S.clips.filter(c=>(!CF.acct||c.accountId===CF.acct)&&(!CF.camp||c.campaignId===CF.camp));
+function contentSec(a){
+  const mine=S.clips.filter(c=>c.accountId===a.id);
+  const list=mine.filter(c=>!CF.camp||c.campaignId===CF.camp);
   const posted=list.filter(isPosted);
-  const td=S.clips.filter(c=>isPosted(c)&&c.postedAt===today()).length,dt=num(S.settings.dailyTarget);
+  const td=mine.filter(c=>isPosted(c)&&c.postedAt===today()).length,dt=num(S.settings.dailyTarget);
   const ready=list.filter(c=>c.stage==='Ready').length,inWork=list.filter(c=>['Idea','Editing'].includes(c.stage)).length;
-  const wins=posted.filter(c=>mult(c)>=2).sort((a,b)=>views(b)-views(a)).slice(0,4);
-  const hooks=posted.filter(c=>c.hook&&views(c)).sort((a,b)=>views(b)-views(a)).slice(0,8);
+  const wins=posted.filter(c=>mult(c)>=2).sort((x,y)=>views(y)-views(x)).slice(0,4);
+  const hooks=posted.filter(c=>c.hook&&views(c)).sort((x,y)=>views(y)-views(x)).slice(0,8);
   const styles=grpMulti(posted.filter(views),c=>c.editStyle);
-  return `<div class="stack">
-  <div class="row between"><div><h1>Content</h1><div class="muted small">Every clip from idea to payout. Tag hooks and edit styles so you learn what wins.</div></div>
-    <div class="row"><button class="btn" onclick="bulkAdd()">Bulk add</button><button class="btn primary" onclick="editClip()">+ Clip</button></div></div>
-  <div class="row between">
-    <div class="row"><select class="inline" onchange="CF.acct=this.value;render()"><option value="">All accounts</option>${S.accounts.map(a=>`<option value="${a.id}" ${a.id===CF.acct?'selected':''}>${esc(a.handle)} · ${esc(a.platform)}</option>`).join('')}</select>
-    <select class="inline" onchange="CF.camp=this.value;render()"><option value="">All campaigns</option>${S.campaigns.map(k=>`<option value="${k.id}" ${k.id===CF.camp?'selected':''}>${esc(k.name)}</option>`).join('')}</select></div>
-    <div class="seg"><button class="${CF.mode==='board'?'on':''}" onclick="setMode('board')">Board</button><button class="${CF.mode==='table'?'on':''}" onclick="setMode('table')">Performance</button></div>
+  const camps=acctCamps(a);
+  return `<div class="row between">
+    <div class="row"><select class="inline" onchange="CF.camp=this.value;render()"><option value="">All campaigns</option>${camps.map(k=>`<option value="${k.id}" ${k.id===CF.camp?'selected':''}>${esc(k.name)}</option>`).join('')}</select>
+      <div class="seg"><button class="${CF.mode==='board'?'on':''}" onclick="setMode('board')">Board</button><button class="${CF.mode==='table'?'on':''}" onclick="setMode('table')">Performance</button></div></div>
+    <div class="row"><button class="btn" onclick="bulkAdd()">Bulk add</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
   <div class="grid g4">
     ${tile('Posted today',`${td} / ${dt}`,td>=dt?'Target hit — batch-edit tomorrow\'s':`${dt-td} to go`)}
     ${tile('Ready queue',ready,ready<dt?'Under a day of posts — edit more':'Good buffer')}
     ${tile('In edit',inWork,'ideas + editing')}
-    ${tile('Median views',fmtN(MED),'your baseline — beat it')}
+    ${tile('Median views',fmtN(MED),'this account\'s baseline — beat it')}
   </div>
-  ${wins.length?`<div class="sec-h"><h2>Winners — remix these</h2><span class="muted small">2× your median or better</span></div>
-  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">${wins.map(c=>`<div class="win"><div class="row between nowrap"><span class="x">${mult(c).toFixed(1)}×</span>${who(acct(c.accountId))}</div>
+  ${wins.length?`<div class="sec-h"><h2>Winners — remix these</h2><span class="muted small">2× this account's median or better</span></div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">${wins.map(c=>`<div class="win"><span class="x">${mult(c).toFixed(1)}×</span>
     <div style="font-weight:600">${esc(c.title)}</div><div class="muted small">${fmtN(views(c))} views${c.hookType?' · '+esc(c.hookType):''}${(c.editStyle||[]).length?' · '+esc(c.editStyle[0]):''}</div>
     <div class="row"><button class="btn sm primary" onclick="remix('${c.id}')">Remix</button><button class="btn sm" onclick="editClip('${c.id}')">Open</button></div></div>`).join('')}</div>`:''}
   <div class="sec-h"><h2>${CF.mode==='board'?'Production board':'Performance'}</h2><span class="muted small">${list.length} clip${list.length===1?'':'s'}</span></div>
-  ${CF.mode==='board'?board(list):(posted.length?clipTable(posted,['title','account','campaign','postedAt','hookType','style','lengthSec','views48','views7','mult','est']):'<div class="empty">Post a clip and log its views to see performance.</div>')}
+  ${CF.mode==='board'?board(list):(posted.length?clipTable(posted,['title','campaign','postedAt','hookType','style','lengthSec','views48','views7','mult','est']):'<div class="empty">Post a clip and log its views to see performance.</div>')}
   <div class="grid g2" style="margin-top:20px">
-    <div class="card"><h3 style="margin-bottom:6px">Hook bank</h3><div class="muted small" style="margin-bottom:6px">Your best-performing on-screen hooks. Reuse the pattern on new moments.</div>
+    <div class="card"><h3 style="margin-bottom:6px">Hook bank</h3><div class="muted small" style="margin-bottom:6px">Your best-performing on-screen hooks on ${esc(a.handle)}. Reuse the pattern on new moments.</div>
       ${hooks.length?hooks.map(c=>`<div class="hookrow"><div class="q">“${esc(c.hook)}”<div class="muted small">${fmtN(views(c))} views${mult(c)?' · '+mult(c).toFixed(1)+'×':''}</div></div><button class="btn sm" onclick='copy(${JSON.stringify(c.hook).replace(/'/g,"&#39;")})'>Copy</button></div>`).join(''):'<div class="muted small">Hooks appear here once posted clips have views.</div>'}
     </div>
     ${groupBars('Edit styles that work',styles,'Tag edit styles on your clips to see which get views.')}
-  </div>
   </div>`;
 }
 
-/* ---------- 4. Review ---------- */
+/* ---------- 4. Review (inside an account) ---------- */
 function groupBars(title,rows,emptyMsg){
   const max=Math.max(1,...rows.map(r=>r.avg));
   return `<div class="card"><h3 style="margin-bottom:8px">${title}</h3>${rows.length?rows.map(r=>`<div class="hbar"><span class="small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.label)} <span class="muted">(${r.n})</span></span><div class="bar"><i style="width:${r.avg/max*100}%"></i></div><span class="small num" style="text-align:right">${fmtN(r.avg)} avg</span></div>`).join(''):`<div class="muted small">${emptyMsg||'No data yet.'}</div>`}</div>`;
@@ -782,7 +842,7 @@ function grpMulti(list,keysFn){const m={};list.forEach(c=>{[].concat(keysFn(c)||
 const grp=(list,keyFn)=>grpMulti(list,keyFn);
 const lenB=c=>{const l=num(c.lengthSec);if(!l)return'';return l<20?'Under 20s':l<=45?'20–45s':'Over 45s'};
 const wday=c=>new Date(c.postedAt+'T00:00:00').toLocaleDateString(undefined,{weekday:'long'});
-function insights(withV){
+function insights(withV,all){
   const out=[];
   if(withV.length<5)return [['','Log views on at least 5 posted clips to unlock insights. Views at 48h and 7 days are enough.']];
   const top=(rows,what)=>{const r=rows.filter(x=>x.n>=2);if(r.length>=2&&MED&&r[0].avg>MED)out.push(['',`<b>${esc(r[0].label)}</b> is your best ${what} — ${fmtN(r[0].avg)} avg, ${(r[0].avg/MED).toFixed(1)}× your median. Do more of it.`])};
@@ -791,31 +851,28 @@ function insights(withV){
   top(grpMulti(withV,c=>c.editStyle),'edit style');low(grpMulti(withV,c=>c.editStyle),'edit style');
   top(grp(withV,lenB),'clip length');
   top(grp(withV,wday),'posting day');
-  top(grp(withV,acctLabel),'account');
-  const pp=grp(withV,c=>acct(c.accountId)?.platform);if(pp.length>=2)out.push(['',`<b>${esc(pp[0].label)}</b> gets you the most views per clip (${fmtN(pp[0].avg)} avg vs ${fmtN(pp[pp.length-1].avg)} on ${esc(pp[pp.length-1].label)}).`]);
-  S.campaigns.filter(k=>k.status==='Active').forEach(k=>{const cs=S.clips.filter(c=>c.campaignId===k.id&&isPosted(c)&&daysAgo(c.postedAt)>=7);
+  top(grp(withV,c=>camp(c.campaignId)?.name),'campaign');
+  S.campaigns.filter(k=>k.status==='Active').forEach(k=>{const cs=all.filter(c=>c.campaignId===k.id&&isPosted(c)&&daysAgo(c.postedAt)>=7);
     if(cs.length>=3){const per=cs.reduce((a,c)=>a+est(c),0)/cs.length;if(per<.5)out.push(['w',`<b>${esc(k.name)}</b> pays ${fmt$(per)} per clip after 7 days. Consider switching campaigns.`])}});
-  const sub=S.clips.filter(c=>c.submittedAt).length,rej=S.clips.filter(c=>c.stage==='Rejected').length;
+  const sub=all.filter(c=>c.submittedAt).length,rej=all.filter(c=>c.stage==='Rejected').length;
   if(sub>=4&&rej/sub>.2)out.push(['w',`${Math.round(rej/sub*100)}% of submissions get rejected. Check required tags before every submit.`]);
   return out.length?out:[['','No clear patterns yet — keep tagging hook types and edit styles.']];
 }
-function vReview(){
-  const list=S.clips.filter(isPosted);
+function reviewSec(a){
+  const all=S.clips.filter(c=>c.accountId===a.id);
+  const list=all.filter(isPosted);
   const withV=list.filter(c=>views(c)>0);
-  const rej=S.clips.filter(c=>c.stage==='Rejected').length,sub=S.clips.filter(c=>c.submittedAt).length;
-  const ins=insights(withV);
-  return `<div class="stack"><div><h1>Review</h1><div class="muted small">What's working, what isn't, and what to do about it. Check this weekly.</div></div>
+  const rej=all.filter(c=>c.stage==='Rejected').length,sub=all.filter(c=>c.submittedAt).length;
+  const cost=num(a.cost),earned=all.reduce((s,c)=>s+est(c),0);
+  return `<div class="muted small">What's working on ${esc(a.handle)}, what isn't, and what to do about it. Check this weekly.</div>
   <div class="grid g4">
     ${tile('Median views',fmtN(MED),'per posted clip (7-day if logged)')}
     ${tile('Winners',String(withV.filter(c=>mult(c)>=3).length),'clips at 3× median or more')}
-    ${tile('Est. $ / clip',fmt$(list.length?list.reduce((a,c)=>a+est(c),0)/list.length:0),'across posted clips')}
-    ${tile('Rejection rate',sub?Math.round(rej/sub*100)+'%':'—',`${rej} of ${sub} submitted`)}
+    ${tile('Est. $ / clip',fmt$(list.length?list.reduce((s,c)=>s+est(c),0)/list.length:0),'across posted clips')}
+    ${a.monetized==='Paid'&&cost?tile('Payback',Math.round(earned/cost*100)+'%',`${fmt$(earned)} of ${fmt$(cost)}`):tile('Rejection rate',sub?Math.round(rej/sub*100)+'%':'—',`${rej} of ${sub} submitted`)}
   </div>
-  <div class="card"><h3 style="margin-bottom:6px">Your edge — insights</h3>${ins.map(([t,h])=>`<div class="insight"><span class="i ${t}">${t?'!':'↑'}</span><div class="small">${h}</div></div>`).join('')}</div>
+  <div class="card"><h3 style="margin-bottom:6px">Your edge — insights</h3>${insights(withV,all).map(([t,h])=>`<div class="insight"><span class="i ${t}">${t?'!':'↑'}</span><div class="small">${h}</div></div>`).join('')}</div>
   <div class="grid g3">
-    ${groupBars('By account',grp(withV,acctLabel))}
-    ${groupBars('By platform',grp(withV,c=>acct(c.accountId)?.platform))}
-    ${groupBars('Paid vs unpaid accounts',grp(withV,c=>{const a=acct(c.accountId);return a?(a.monetized==='Paid'?'★ Paid':'Unpaid'):''}))}
     ${groupBars('By hook type',grp(withV,c=>c.hookType))}
     ${groupBars('By edit style',grpMulti(withV,c=>c.editStyle))}
     ${groupBars('By clip length',grp(withV,lenB))}
@@ -823,9 +880,8 @@ function vReview(){
     ${groupBars('By campaign',grp(withV,c=>camp(c.campaignId)?.name))}
   </div>
   <div class="sec-h"><h2>Every posted clip</h2><span class="muted small">★ = 3× median. Make more like these.</span></div>
-  ${list.length?clipTable(list,['title','account','postedAt','hookType','style','lengthSec','views48','views7','mult','est','stage']):'<div class="empty">Post a clip and log its views to see what works.</div>'}
-  <div class="card stack"><h3>Weekly review questions</h3><div class="muted small">Which hook type and edit style have the best average? Which account is pulling its weight — and is each paid account on track to pay itself back? Is any campaign under $0.50 per clip after 7 days — drop it. Did anything get rejected — what rule did it miss?</div></div>
-  </div>`;
+  ${list.length?clipTable(list,['title','campaign','postedAt','hookType','style','lengthSec','views48','views7','mult','est','stage']):'<div class="empty">Post a clip and log its views to see what works.</div>'}
+  <div class="card stack"><h3>Weekly review questions</h3><div class="muted small">Which hook type and edit style have the best average? ${a.monetized==='Paid'?'Is this paid account on track to pay itself back? ':''}Is any campaign under $0.50 per clip after 7 days — drop it. Did anything get rejected — what rule did it miss?</div></div>`;
 }
 
 /* ---------- Captions ---------- */
@@ -936,8 +992,84 @@ function importJSON(inp){
 }
 function resetAll(){if(!confirm('Erase all Clipper data in this browser? Export a backup first if you need it.'))return;S=defaults();save();render();toast('Erased')}
 
+/* ---------- Pomodoro sidebar ---------- */
+const PK=LS_KEY+'.pomo';
+const PLABEL={focus:'Focus',short:'Short break',long:'Long break'};
+const PDEF={mode:'focus',running:false,endAt:0,left:25*60e3,lens:{focus:25,short:5,long:15},goal:8,done:0,day:'',task:'',open:false};
+let P={...PDEF};
+try{P={...PDEF,...JSON.parse(localStorage.getItem(PK)||'{}')}}catch(e){}
+P.lens={...PDEF.lens,...P.lens};
+const pSave=()=>{try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}};
+const pLen=m=>(num(P.lens[m])||PDEF.lens[m])*60e3;
+const pLeft=()=>P.running?Math.max(0,P.endAt-Date.now()):P.left;
+const mmss=ms=>{const s=Math.ceil(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function togglePomo(force){
+  P.open=force??!P.open;pSave();
+  document.getElementById('pomo').classList.toggle('open',P.open);
+  document.body.classList.toggle('pomo-open',P.open);
+  if(P.open)renderPomo();
+}
+function pSet(m){P.mode=m;P.running=false;P.left=pLen(m);pSave();renderPomo()}
+function pStart(){
+  if(P.running){P.left=pLeft();P.running=false}
+  else{P.endAt=Date.now()+P.left;P.running=true;try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}}
+  pSave();renderPomo();
+}
+function pReset(){P.running=false;P.left=pLen(P.mode);pSave();renderPomo()}
+function pSkip(){pSet(P.mode==='focus'?'short':'focus')}
+function pDone(){
+  const was=P.mode;
+  if(was==='focus')P.done++;
+  pSet(was==='focus'?(P.done%4===0?'long':'short'):'focus');
+  chime();
+  const m=was==='focus'?`Focus block done (${P.done} today) — take a ${P.mode==='long'?'long ':''}break`:'Break over — back to it';
+  toast(m);try{if('Notification' in window&&Notification.permission==='granted')new Notification('Clipper',{body:m})}catch(e){}
+}
+function chime(){
+  try{const c=new (window.AudioContext||window.webkitAudioContext)();
+    [660,880,990].forEach((f,i)=>{const t=c.currentTime+i*.22,o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.3,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.start(t);o.stop(t+.22)})}catch(e){}
+}
+function pLenSet(m,v){P.lens[m]=num(v)||PDEF.lens[m];if(!P.running&&P.mode===m)P.left=pLen(m);pSave();renderPomo()}
+function renderPomo(){
+  const el=document.getElementById('pomo');if(!P.open){el.innerHTML='';return}
+  el.innerHTML=`<div class="hd"><h3>Focus timer</h3><button class="btn ghost" onclick="togglePomo(false)" aria-label="Close timer">✕</button></div>
+  <div class="bd stack">
+    <div class="seg" style="display:flex">${Object.keys(PLABEL).map(m=>`<button class="${P.mode===m?'on':''}" style="flex:1" onclick="pSet('${m}')">${PLABEL[m]}</button>`).join('')}</div>
+    <div class="ring"><svg width="220" height="220" viewBox="0 0 220 220"><circle cx="110" cy="110" r="100" fill="none" stroke="var(--panel2)" stroke-width="10"/>
+      <circle id="p_arc" cx="110" cy="110" r="100" fill="none" stroke="${P.mode==='focus'?'var(--accent)':'var(--good)'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="628.32"/></svg>
+      <div class="t"><div><b id="p_time"></b><div class="muted small">${PLABEL[P.mode]}</div></div></div></div>
+    <div class="row" style="justify-content:center"><button class="btn primary" id="p_go" onclick="pStart()"></button><button class="btn" onclick="pReset()">Reset</button><button class="btn" onclick="pSkip()">Skip ›</button></div>
+    <div><label class="f" for="p_task">Working on</label><input id="p_task" value="${esc(P.task)}" placeholder="e.g. Edit 3 clips for @tradeclips" oninput="P.task=this.value;pSave()"></div>
+    <div><div class="row between small" style="margin-bottom:6px"><span class="muted">Focus blocks today</span><span>${P.done} / ${P.goal}</span></div>
+      <div class="tomatoes">${Array.from({length:Math.max(P.goal,P.done)},(_,i)=>`<i class="${i<P.done?'on':''}"></i>`).join('')}</div></div>
+    <details><summary class="small muted" style="cursor:pointer">Timer settings</summary>
+      <div class="fields" style="grid-template-columns:repeat(2,1fr);margin-top:10px">
+        ${Object.keys(PLABEL).map(m=>`<div><label class="f">${PLABEL[m]} (min)</label><input type="number" min="1" value="${esc(P.lens[m])}" onchange="pLenSet('${m}',this.value)"></div>`).join('')}
+        <div><label class="f">Daily goal</label><input type="number" min="1" value="${esc(P.goal)}" onchange="P.goal=num(this.value)||8;pSave();renderPomo()"></div>
+      </div></details>
+    <div class="muted small">Batch-edit clips in focus blocks. Post, reply to comments and log views on breaks. Every 4th break is a long one.</div>
+  </div>`;
+  pTick();
+}
+function pTick(){
+  if(P.day!==today()){P.day=today();P.done=0;pSave();if(P.open)renderPomo()}
+  if(P.running&&pLeft()<=0)pDone();
+  const l=pLeft(),btn=document.getElementById('pomoBtn');
+  btn.textContent=P.running?`⏱ ${mmss(l)}`:'⏱ Focus';
+  btn.classList.toggle('run',P.running);
+  document.title=P.running?`${mmss(l)} · ${PLABEL[P.mode]} — Clipper`:'Clipper';
+  const t=document.getElementById('p_time');if(!t)return;
+  t.textContent=mmss(l);
+  document.getElementById('p_arc').style.strokeDashoffset=String(628.32*(1-l/pLen(P.mode)));
+  document.getElementById('p_go').textContent=P.running?'Pause':l<pLen(P.mode)?'Resume':'Start';
+}
+setInterval(pTick,500);
+
 parseHash();
 render();
+if(P.open)togglePomo(true);
+pTick();
 </script>
 </body>
 </html>
