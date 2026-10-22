@@ -237,6 +237,11 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .dash.eqh{align-items:stretch}
 .dash.eqh>aside{display:flex;flex-direction:column}
 .dash.eqh>aside>.card{flex:1}
+.vstage{border-top:1px solid var(--line);padding:4px 0}
+.vstage:first-of-type{border-top:0}
+.vstage-h{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:0;color:var(--text);font:600 14px Inter;padding:8px 2px;cursor:pointer}
+.vstage-h:disabled{cursor:default;color:var(--muted)}
+.vstage .kc{margin:0 0 8px}
 .charttodo{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:stretch}
 .todoside{display:flex;flex-direction:column;max-height:340px}
 .todoside .scroll{overflow-y:auto;flex:1;min-height:0}
@@ -900,19 +905,15 @@ function pipelineCard(b,cs){
     <div class="row"><button class="btn sm" onclick="bulkAdd()">Bulk add</button><button class="btn sm primary" onclick="editClip()">+ Clip</button></div></div>
     ${board(cs)}</div>`;
 }
-/* compact campaign list for the brand page's side column */
-function campSide(b,as,cs){
-  const camps=brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3};
-  return `<div class="card"><div class="row between" style="margin-bottom:6px"><h3>Campaigns</h3><button class="btn sm primary" onclick="editCamp()">+ Campaign</button></div>
-  ${camps.length?[...camps].sort((x,y)=>(order[x.status]??9)-(order[y.status]??9)).map(k=>{
-    const kc=cs.filter(c=>c.campaignId===k.id);const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
-    const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';const ls=kc.map(c=>c.submittedAt).filter(Boolean).sort().pop();
-    return `<div class="campline" id="c-${k.id}" onclick="go('camp','${k.id}')">
-      <div class="row between nowrap"><b class="h">${esc(k.name)}</b><span class="chip ${stc}">${esc(k.status)}</span></div>
-      <div class="row small muted" style="gap:10px;margin-top:4px">${k.cpm?`<span><b style="color:var(--text)">$${num(k.cpm).toFixed(2)}</b>/1K</span>`:''}<span><b style="color:var(--text)">${kc.filter(c=>c.stage==='Ready').length}</b> ready</span><span><b style="color:var(--text)">${kc.filter(c=>['Posted','Submitted','Approved'].includes(c.stage)).length}</b> live</span><span><b style="color:var(--text)">${fmt$(kc.reduce((s,c)=>s+est(c),0))}</b></span></div>
-      ${bl!=null?`<div class="row nowrap small muted" style="margin-top:6px;gap:8px"><div class="bar" style="flex:1"><i style="width:${Math.min(100,bl)}%;${bl<20?'background:var(--bad)':''}"></i></div><span>${bl}% left</span></div>`:''}
-      <div class="small muted" style="margin-top:4px">Last submit: ${ls?`${daysAgo(ls)}d ago`:'never'}</div>
-    </div>`}).join(''):'<div class="muted small" style="padding:10px 0">No campaigns yet. Add one and link it to this brand\'s accounts.</div>'}
+/* the production pipeline as a vertical list (no sideways scrolling) */
+let PCOLL={};
+function pipeSide(b,cs){
+  const flow=STAGES.filter(st=>st!=='Rejected'||cs.some(c=>c.stage==='Rejected'));
+  return `<div class="card"><div class="row between" style="margin-bottom:6px"><h3>Production pipeline</h3><div class="row" style="gap:6px"><button class="btn sm" onclick="bulkAdd()">Bulk add</button><button class="btn sm primary" onclick="editClip()">+ Clip</button></div></div>
+  <div class="muted small" style="margin-bottom:8px">Idea → payout. ‹ › moves a clip, click it to edit.</div>
+  ${flow.map(st=>{const l=cs.filter(c=>c.stage===st);const open=l.length&&!PCOLL[st];
+    return `<div class="vstage"><button class="vstage-h" onclick="PCOLL['${st}']=!PCOLL['${st}'];render()" ${l.length?'':'disabled'}><span>${l.length?(open?'▾':'▸'):'·'} ${st}</span><span class="chip ${l.length&&st!=='Rejected'?'a':''}">${l.length}</span></button>
+      ${open?l.map(kcard).join(''):''}</div>`}).join('')}
   </div>`;
 }
 function vBrand(id){
@@ -935,13 +936,13 @@ function vBrand(id){
       <div class="scroll">${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div></div>
   </div>
   ${brandOps(b,as,cs)}
-  ${pipelineCard(b,cs)}
+  ${brandPanels(b,as,cs)}
   <div class="dash eqh">
     <div class="stack">
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
       <div class="brands">${as.map(a=>acctCard(a,true)).join('')}<button class="addcard slim" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
     </div>
-    <aside class="stack" style="position:static">${campSide(b,as,cs)}</aside>
+    <aside class="stack" style="position:static">${pipeSide(b,cs)}</aside>
   </div>
   ${b.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(b.notes)}</div></div>`:''}
   </div>`;
