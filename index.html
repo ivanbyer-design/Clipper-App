@@ -229,6 +229,9 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .bgroup .bsub-h:last-child{border-radius:0 0 var(--radius) var(--radius)}
 .aline{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;border-left:2px solid var(--line);margin-left:2px}
 .aline:hover{background:var(--panel2)}
+.aline{cursor:pointer}
+.todopipe{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.todopipe{grid-template-columns:minmax(0,1fr)}}
 .aline .h{flex:1;min-width:90px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .aline .m{font-size:12px;color:var(--muted);white-space:nowrap;min-width:84px}
 .aline .m b{color:var(--text);font-size:13px}
@@ -384,6 +387,14 @@ function acctStats(a){
 }
 const pb=(p,cls='')=>`<span class="pb ${esc(p)} ${cls}" title="${esc(p)}">${PSHORT[p]||'?'}</span>`;
 const mtag=a=>a.monetized==='Paid'?'<span class="tag paid">★ Paid</span>':'<span class="tag unpaid">Unpaid</span>';
+/* profile link: the one saved on the account, else the standard URL built from the handle */
+function profileUrl(a){
+  const u=safeUrl(a.url);if(u)return u;
+  const h=String(a.handle||'').replace(/^@/,'').trim();if(!h)return '';
+  const e=encodeURIComponent(h);
+  return {TikTok:`https://www.tiktok.com/@${e}`,YouTube:`https://www.youtube.com/@${e}`,Instagram:`https://www.instagram.com/${e}/`,X:`https://x.com/${e}`}[a.platform]||'';
+}
+const openLink=(a,cls='btn sm')=>{const u=profileUrl(a);return u?`<a class="${cls}" href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open ${esc(a.handle)} on ${esc(a.platform)}">${esc(a.platform==='X'?'𝕏':a.platform)} ↗</a>`:''};
 const acctLabel=c=>{const a=acct(c.accountId);return a?`${a.handle} · ${PSHORT[a.platform]||a.platform}`:''};
 const who=a=>a?`<span class="who">${pb(a.platform,'xs')}${esc(a.handle)}</span>`:'';
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800)}
@@ -594,7 +605,7 @@ const ACCT_FIELDS=[
   {k:'brandId',label:'Brand',type:'select',options:()=>[['','— No brand —'],...S.brands.map(b=>[b.id,b.name])]},
   {k:'monetized',label:'Monetization',type:'select',options:[['Unpaid','Not monetized'],['Paid','Paid — pre-monetized']]},
   {k:'cost',label:'Price paid for account ($)',type:'number',hint:'Pre-monetized accounts only — tracks when it pays itself back.'},
-  {k:'url',label:'Profile link',type:'url',ph:'https://'},
+  {k:'url',label:'Profile link',type:'url',ph:'https://',hint:'Leave blank to use the standard link built from the handle.'},
   {k:'niche',label:'Niche'},
   {k:'status',label:'Status',type:'select',options:ACCT_STATUS},
   {k:'created',label:'Created / bought on',type:'date'},
@@ -823,9 +834,9 @@ function brandGroup(b){
 }
 function acctLine(a){
   const s=acctStats(a),due=TODOS.filter(t=>t.acct===a.id).length;
-  return `<a class="aline" href="#/acct/${a.id}">${pb(a.platform,'xs')}<span class="h">${esc(a.handle)}</span>${mtag(a)}
+  return `<div class="aline" role="link" tabindex="0" onclick="go('acct','${a.id}')" onkeydown="if(event.key==='Enter')go('acct','${a.id}')">${pb(a.platform,'xs')}<span class="h">${esc(a.handle)}</span>${openLink(a)}${mtag(a)}
     <span class="m"><b>${fmtN(num(a.followers))}</b> followers</span><span class="m"><b>${s.posted}</b> posted</span><span class="m"><b>${fmtN(s.views)}</b> views</span>
-    <span class="m" style="min-width:64px;text-align:right">${due?`<b style="color:var(--warn)">${due} to-do</b>`:'<span class="muted">—</span>'}</span><span class="muted">›</span></a>`;
+    <span class="m" style="min-width:64px;text-align:right">${due?`<b style="color:var(--warn)">${due} to-do</b>`:'<span class="muted">—</span>'}</span><span class="muted">›</span></div>`;
 }
 function brandCard(b){
   const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
@@ -873,8 +884,10 @@ function brandPanels(b,as,cs,allCamps){
       <td class="num">${kc.filter(c=>c.stage==='Ready').length}</td><td class="num">${kc.filter(c=>['Posted','Submitted','Approved'].includes(c.stage)).length}</td>
       <td class="num">${fmt$(kc.reduce((s,c)=>s+est(c),0))}</td><td>${ls?`${daysAgo(ls)}d ago`:'<span class="muted">never</span>'}</td></tr>`}).join('')}
     </tbody></table></div>`:`<div class="empty">No campaigns yet. Add one and link it to this brand's accounts.</div>`}
-  </div>
-  <div class="card"><div class="row between" style="margin-bottom:8px"><div><h3>Production pipeline</h3><div class="muted small">Every clip across ${esc(b.name)}, idea to payout. Use ‹ › to move a clip, click it to edit.</div></div>
+  </div>${allCamps?pipelineCard(b,cs):''}`;
+}
+function pipelineCard(b,cs){
+  return `<div class="card" style="min-width:0"><div class="row between" style="margin-bottom:8px"><div><h3>Production pipeline</h3><div class="muted small">Every clip across ${esc(b.name)}, idea to payout. Use ‹ › to move a clip, click it to edit.</div></div>
     <div class="row"><button class="btn sm" onclick="bulkAdd()">Bulk add</button><button class="btn sm primary" onclick="editClip()">+ Clip</button></div></div>
     ${board(cs)}</div>`;
 }
@@ -894,14 +907,17 @@ function vBrand(id){
   <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
     ${chartBox(series,{h:170,label:`Followers per ${b.name} account over time`})}</div>
   ${brandOps(b,as,cs)}
+  <div class="todopipe">
+    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
+      ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div>
+    ${pipelineCard(b,cs)}
+  </div>
   <div class="dash">
     <div class="stack">
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
       <div class="brands">${as.map(a=>acctCard(a,true)).join('')}<button class="addcard slim" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
     </div>
     <aside class="stack" style="position:static">
-    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
-      ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div>
     <div class="card" id="folbulk"><h3 style="margin-bottom:4px">Log followers</h3><div class="muted small" style="margin-bottom:10px">Weekly ritual: type each account's current count and save. It adds today's point to every graph.</div>
       ${as.length?as.map(a=>`<div class="hookrow">${pb(a.platform,'xs')}<div class="q">${esc(a.handle)}<div class="muted small">${lastLog(a)?`Last: ${fmtN(num(a.followers))} on ${esc(lastLog(a))}`:'Never logged'}</div></div><input type="number" min="0" class="inline" style="width:120px" data-fol="${a.id}" placeholder="${esc(a.followers||'0')}"></div>`).join('')+`<div style="margin-top:10px"><button class="btn primary" onclick="logFolBulk()">Save today's counts</button></div>`:'<div class="muted small">Add accounts first.</div>'}
     </div>
@@ -926,7 +942,7 @@ function acctCard(a,row){
   const stc={Active:'a','Warming up':'w',Paused:'',Flagged:'b'}[a.status]||'';
   const cost=num(a.cost);const due=TODOS.filter(t=>t.acct===a.id).length;
   return `<div class="acard ${row?'brow':''}" style="--pc:${PCOLOR[a.platform]||'var(--line)'}" onclick="go('acct','${a.id}')">
-    <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div>${mtag(a)}</div>
+    <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div><div class="row nowrap" style="gap:6px">${openLink(a)}${mtag(a)}</div></div>
     <div class="stats"><div><div class="l">Followers</div><b>${fmtN(num(a.followers))}</b></div><div><div class="l">Camps</div><b>${s.camps}</b></div><div><div class="l">Posted</div><b>${s.posted}</b></div><div><div class="l">Views</div><b>${fmtN(s.views)}</b></div></div>
     ${row?'<div class="stack" style="--g:8px">':''}
     ${a.monetized==='Paid'&&cost?`<div><div class="row between small muted"><span>Paid back</span><span>${fmt$(s.earned)} / ${fmt$(cost)}</span></div><div class="bar gold"><i style="width:${Math.min(100,s.earned/cost*100)}%"></i></div></div>`:''}
@@ -941,7 +957,7 @@ const ASEC=[['','Overview'],['camps','Campaigns'],['content','Content'],['review
 function vAcct(id,sec){
   const a=acct(id);if(!a)return `<div class="empty">That account doesn't exist anymore. <a href="#/accts">Back to accounts</a></div>`;
   if(!ASEC.some(([k])=>k===sec))sec='';
-  const url=safeUrl(a.url);
+  const url=profileUrl(a);
   const cnt={camps:acctCamps(a).length,content:S.clips.filter(c=>c.accountId===a.id).length,res:S.resources.filter(r=>r.accountId===a.id&&!r.campaignId).length};
   const body={'':acctOverview,camps:acctCampsSec,content:contentSec,review:reviewSec,res:a=>resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}[sec](a);
   return `<div class="stack">
@@ -950,7 +966,7 @@ function vAcct(id,sec){
     ${pb(a.platform,'lg')}
     <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${mtag(a)}<span class="chip">${esc(a.status)}</span>${brand(a.brandId)?`<a class="chip" href="#/brand/${a.brandId}" style="text-decoration:none">${esc(brand(a.brandId).name)}</a>`:''}</div>
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
-    <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open profile ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
+    <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open on ${esc(a.platform)} ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
   <nav class="atabs">${ASEC.map(([k,l])=>`<a class="${k===sec?'on':''}" href="#/acct/${a.id}${k?'/'+k:''}">${IC[k]}${l}${cnt[k]!=null?`<span class="c">${cnt[k]}</span>`:''}</a>`).join('')}</nav>
   ${body}
