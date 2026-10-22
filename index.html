@@ -232,6 +232,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .brands{display:flex;flex-direction:column;gap:12px}
 .acard.brow{display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(250px,1.5fr) minmax(170px,1fr);align-items:center;gap:20px}
 .brow .id{align-items:flex-start}
+.brow .stack[style*="--g"]>*+*{margin-top:8px}
 .addcard.slim{min-height:64px}
 @media (max-width:1150px){.acard.brow{grid-template-columns:1fr;gap:12px}}
 .blogo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font:700 16px "Space Grotesk";background:var(--accent-soft);color:var(--accent);overflow:hidden;flex:none}
@@ -865,22 +866,26 @@ function vBrand(id){
   <div class="card hero">${blogo(b,'lg')}
     <div class="grow"><h1>${esc(b.name)}</h1><div class="muted small">${esc(b.niche||'')}${b.niche?' · ':''}${as.length} account${as.length===1?'':'s'}</div></div>
     <div class="row"><button class="btn" onclick="editBrand('${b.id}')">Edit brand</button><button class="btn primary" onclick="editAcct()">+ Account</button></div></div>
+  <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
+    ${chartBox(series,{h:260,label:`Followers per ${b.name} account over time`})}</div>
   <div class="grid g4">
     ${tile('Followers',fmtN(fol),`${sgn(gain(as,7))} this week · ${sgn(gain(as,30))} in 30 days`)}
     ${tile('Clips posted',posted.length,`${cs.length-posted.length} in progress`)}
     ${tile('Views',fmtN(posted.reduce((s,c)=>s+views(c),0)),posted.length?`${fmtN(posted.reduce((s,c)=>s+views(c),0)/posted.length)} avg per clip`:'—')}
     ${tile('Est. earnings',fmt$(cs.reduce((s,c)=>s+est(c),0)),'across this brand')}
   </div>
-  <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
-    ${chartBox(series,{h:260,label:`Followers per ${b.name} account over time`})}</div>
-  <div class="sec-h"><h2>Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
-  <div class="grid g3">${as.map(acctCard).join('')}<button class="addcard" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
-  <div class="grid g2" style="margin-top:6px">
+  <div class="dash">
+    <div class="stack">
+      <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
+      <div class="brands">${as.map(a=>acctCard(a,true)).join('')}<button class="addcard slim" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
+    </div>
+    <aside class="stack" style="position:static">
     <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
       ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div>
     <div class="card" id="folbulk"><h3 style="margin-bottom:4px">Log followers</h3><div class="muted small" style="margin-bottom:10px">Weekly ritual: type each account's current count and save. It adds today's point to every graph.</div>
       ${as.length?as.map(a=>`<div class="hookrow">${pb(a.platform,'xs')}<div class="q">${esc(a.handle)}<div class="muted small">${lastLog(a)?`Last: ${fmtN(num(a.followers))} on ${esc(lastLog(a))}`:'Never logged'}</div></div><input type="number" min="0" class="inline" style="width:120px" data-fol="${a.id}" placeholder="${esc(a.followers||'0')}"></div>`).join('')+`<div style="margin-top:10px"><button class="btn primary" onclick="logFolBulk()">Save today's counts</button></div>`:'<div class="muted small">Add accounts first.</div>'}
     </div>
+    </aside>
   </div>
   ${b.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(b.notes)}</div></div>`:''}
   </div>`;
@@ -895,16 +900,18 @@ function logFolBulk(){
   if(!n){toast('Type at least one count');return}
   save();render();toast(`Logged ${n} account${n===1?'':'s'}`);
 }
-function acctCard(a){
+function acctCard(a,row){
   const s=acctStats(a);const w=(a.warmup||[]).length;
   const stc={Active:'a','Warming up':'w',Paused:'',Flagged:'b'}[a.status]||'';
   const cost=num(a.cost);const due=TODOS.filter(t=>t.acct===a.id).length;
-  return `<div class="acard" style="--pc:${PCOLOR[a.platform]||'var(--line)'}" onclick="go('acct','${a.id}')">
+  return `<div class="acard ${row?'brow':''}" style="--pc:${PCOLOR[a.platform]||'var(--line)'}" onclick="go('acct','${a.id}')">
     <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div>${mtag(a)}</div>
     <div class="stats"><div><div class="l">Followers</div><b>${fmtN(num(a.followers))}</b></div><div><div class="l">Camps</div><b>${s.camps}</b></div><div><div class="l">Posted</div><b>${s.posted}</b></div><div><div class="l">Views</div><b>${fmtN(s.views)}</b></div></div>
+    ${row?'<div class="stack" style="--g:8px">':''}
     ${a.monetized==='Paid'&&cost?`<div><div class="row between small muted"><span>Paid back</span><span>${fmt$(s.earned)} / ${fmt$(cost)}</span></div><div class="bar gold"><i style="width:${Math.min(100,s.earned/cost*100)}%"></i></div></div>`:''}
     ${a.status==='Warming up'?`<div><div class="row between small muted"><span>Warm-up</span><span>${w}/${WARMUP.length}</span></div><div class="bar"><i style="width:${w/WARMUP.length*100}%"></i></div></div>`:''}
     <div class="row between"><span class="chip ${stc}">${esc(a.status)}</span><span class="small muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(s.earned)} earned</span></div>
+    ${row?'</div>':''}
   </div>`;
 }
 
