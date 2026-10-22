@@ -229,6 +229,11 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .spark{width:100%;height:42px;display:block}
 .spark-empty{height:42px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:8px}
 /* brands */
+.brands{display:flex;flex-direction:column;gap:12px}
+.acard.brow{display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(250px,1.5fr) minmax(170px,1fr);align-items:center;gap:20px}
+.brow .id{align-items:flex-start}
+.addcard.slim{min-height:64px}
+@media (max-width:1150px){.acard.brow{grid-template-columns:1fr;gap:12px}}
 .blogo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font:700 16px "Space Grotesk";background:var(--accent-soft);color:var(--accent);overflow:hidden;flex:none}
 .blogo img{width:100%;height:100%;object-fit:cover;display:block}
 .blogo.lg{width:64px;height:64px;font-size:22px;border-radius:16px}
@@ -809,6 +814,9 @@ function vAccts(){
   return `<div class="stack">
   <div class="row between"><div><h1>Brands</h1><div class="muted small">Each brand holds its social accounts. Open one to see its account hubs.</div></div>
     <div class="row"><button class="btn" onclick="editAcct()">+ Account</button><button class="btn primary" onclick="editBrand()">+ Brand</button></div></div>
+  <div class="card"><div class="row between" style="margin-bottom:10px"><div><h3>Follower growth</h3><div class="muted small">All accounts${homeChart==='brand'?', split by brand':''}</div></div>
+    <div class="seg"><button class="${homeChart==='total'?'on':''}" onclick="homeChart='total';render()">Total</button><button class="${homeChart==='brand'?'on':''}" onclick="homeChart='brand';render()">By brand</button></div></div>
+    ${chartBox(series,{h:260,label:'Followers across all accounts over time'})}</div>
   <div class="grid g4">
     ${tile('Followers',fmtN(fol),`<span style="color:${g30>0?'var(--good)':'inherit'}">${sgn(g30)}</span> in the last 30 days`)}
     ${tile('Brands · accounts',`${S.brands.length} · ${S.accounts.length}`,`${S.accounts.filter(a=>a.monetized==='Paid').length} paid accounts`)}
@@ -818,10 +826,7 @@ function vAccts(){
   </div>
   <div class="dash">
     <div class="stack">
-      <div class="card"><div class="row between" style="margin-bottom:10px"><div><h3>Follower growth</h3><div class="muted small">All accounts${homeChart==='brand'?', split by brand':''}</div></div>
-        <div class="seg"><button class="${homeChart==='total'?'on':''}" onclick="homeChart='total';render()">Total</button><button class="${homeChart==='brand'?'on':''}" onclick="homeChart='brand';render()">By brand</button></div></div>
-        ${chartBox(series,{h:240,label:'Followers across all accounts over time'})}</div>
-      <div class="grid g3">${S.brands.map(brandCard).join('')}<button class="addcard" onclick="editBrand()">+ New brand</button></div>
+      <div class="brands">${S.brands.map(brandCard).join('')}<button class="addcard slim" onclick="editBrand()">+ New brand</button></div>
       ${unb.length?`<div class="sec-h"><h2>Accounts without a brand</h2><span class="muted small">Edit an account to put it under a brand</span></div><div class="grid g3">${unb.map(acctCard).join('')}</div>`:''}
       ${loose.length?`<a class="card row between" href="#/camps" style="text-decoration:none;color:inherit"><span>${loose.length} campaign${loose.length===1?' isn\'t':'s aren\'t'} linked to an account yet</span><span class="btn sm">Review ›</span></a>`:''}
     </div>
@@ -840,12 +845,11 @@ function brandCard(b){
   const fol=as.reduce((s,a)=>s+num(a.followers),0),g=gain(as,30);
   const cs=S.clips.filter(c=>ids.has(c.accountId)),posted=cs.filter(isPosted);
   const due=TODOS.filter(t=>ids.has(t.acct)).length;
-  return `<div class="acard" style="--pc:var(--accent)" onclick="go('brand','${b.id}')">
-    <div class="row nowrap"><div class="id">${blogo(b)}<div style="min-width:0"><div class="h">${esc(b.name)}</div><div class="muted small">${esc(b.niche||'')}</div></div></div>
-      <div class="row" style="gap:4px;flex-wrap:nowrap">${as.slice(0,5).map(a=>pb(a.platform,'xs')).join('')}</div></div>
+  return `<div class="acard brow" style="--pc:var(--accent)" onclick="go('brand','${b.id}')">
+    <div class="id">${blogo(b)}<div style="min-width:0"><div class="h">${esc(b.name)}</div><div class="muted small">${esc(b.niche||'')}</div>
+      <div class="row" style="gap:4px;margin-top:6px">${as.map(a=>pb(a.platform,'xs')).join('')||'<span class="muted small">No accounts yet</span>'}</div></div></div>
     <div class="stats"><div><div class="l">Followers</div><b>${fmtN(fol)}</b></div><div><div class="l">Accounts</div><b>${as.length}</b></div><div><div class="l">Posted</div><b>${posted.length}</b></div><div><div class="l">Views</div><b>${fmtN(posted.reduce((s,c)=>s+views(c),0))}</b></div></div>
-    ${spark(sumPts(as))}
-    <div class="row between small"><span style="color:${g>0?'var(--good)':'var(--muted)'}">${sgn(g)} followers · 30d</span><span class="muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(cs.reduce((s,c)=>s+est(c),0))}</span></div>
+    <div>${spark(sumPts(as))}<div class="row between small" style="margin-top:6px"><span style="color:${g>0?'var(--good)':'var(--muted)'}">${sgn(g)} followers · 30d</span><span class="muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(cs.reduce((s,c)=>s+est(c),0))}</span></div></div>
   </div>`;
 }
 function vBrand(id){
