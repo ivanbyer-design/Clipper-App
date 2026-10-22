@@ -230,6 +230,8 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .aline{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;border-left:2px solid var(--line);margin-left:2px}
 .aline:hover{background:var(--panel2)}
 .aline{cursor:pointer}
+.chip.live{display:inline-flex;align-items:center;gap:5px;color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.chip.live i{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}
 .campline{padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
 .campline:first-of-type{border-top:0}
 .campline:hover .h{color:var(--accent)}
@@ -368,7 +370,7 @@ const fmtN=n=>n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M':n>=1e3?(n/1e3).toFixed(n>=1
 const fmt$=n=>'$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:n<100?2:0,maximumFractionDigits:2});
 const camp=id=>S.campaigns.find(c=>c.id===id);
 const acct=id=>S.accounts.find(a=>a.id===id);
-const views=c=>num(c.views7)||num(c.views48);
+const views=c=>num(c.views7)||num(c.views48)||num(c.liveViews);
 const isPosted=c=>c.postedAt&&c.stage!=='Rejected';
 function est(c){
   if(num(c.paid))return num(c.paid);
@@ -783,7 +785,7 @@ function todos(){
     t.push({acct:aid||'',d:'b',t:`Budget low: ${k.name}`,s:`${num(k.budgetLeft)}% left — update or switch campaigns`,to:aid?['acct',aid,'camps']:['camp',k.id],focus:{sel:'#c-'+k.id}})});
   S.accounts.forEach(a=>{
     const ll=lastLog(a);
-    if(a.status!=='Paused'&&(!ll||daysAgo(ll)>=7))t.push({acct:a.id,d:'',t:`Update followers: ${a.handle} (${a.platform})`,s:ll?`Last logged ${daysAgo(ll)} days ago`:'Never logged — start the growth graph',to:['acct',a.id],focus:{sel:'#fol'}});
+    if(a.status!=='Paused'&&!(a.live&&Date.now()-a.live.updated<2*DAY)&&(!ll||daysAgo(ll)>=7))t.push({acct:a.id,d:'',t:`Update followers: ${a.handle} (${a.platform})`,s:ll?`Last logged ${daysAgo(ll)} days ago`:'Never logged — start the growth graph',to:['acct',a.id],focus:{sel:'#fol'}});
     if(a.status==='Warming up')t.push({acct:a.id,d:'',t:`Warm-up: ${a.handle} (${a.platform})`,s:`${(a.warmup||[]).length}/${WARMUP.length} steps done`,to:['acct',a.id],focus:{sel:'#warm'}});
     else if(a.status==='Active'&&!acctCamps(a).length)t.push({acct:a.id,d:'w',t:`No campaign on ${a.handle}`,s:'Link a campaign so posts earn',to:['acct',a.id,'camps'],focus:{sel:'#campadd'}});
   });
@@ -848,7 +850,7 @@ function brandGroup(b){
 }
 function acctLine(a){
   const s=acctStats(a),due=TODOS.filter(t=>t.acct===a.id).length;
-  return `<div class="aline" role="link" tabindex="0" onclick="go('acct','${a.id}')" onkeydown="if(event.key==='Enter')go('acct','${a.id}')">${pb(a.platform,'xs')}<span class="h">${esc(a.handle)}</span>${openLink(a)}${mtag(a)}
+  return `<div class="aline" role="link" tabindex="0" onclick="go('acct','${a.id}')" onkeydown="if(event.key==='Enter')go('acct','${a.id}')">${pb(a.platform,'xs')}<span class="h">${esc(a.handle)}</span>${liveBadge(a)}${openLink(a)}${mtag(a)}
     <span class="m"><b>${fmtN(num(a.followers))}</b> followers</span><span class="m"><b>${s.posted}</b> posted</span><span class="m"><b>${fmtN(s.views)}</b> views</span>
     <span class="m" style="min-width:64px;text-align:right">${due?`<b style="color:var(--warn)">${due} to-do</b>`:'<span class="muted">—</span>'}</span><span class="muted">›</span></div>`;
 }
@@ -957,7 +959,7 @@ function acctCard(a,row){
   const stc={Active:'a','Warming up':'w',Paused:'',Flagged:'b'}[a.status]||'';
   const cost=num(a.cost);const due=TODOS.filter(t=>t.acct===a.id).length;
   return `<div class="acard ${row?'brow':''}" style="--pc:${PCOLOR[a.platform]||'var(--line)'}" onclick="go('acct','${a.id}')">
-    <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div><div class="row nowrap" style="gap:6px">${openLink(a)}${mtag(a)}</div></div>
+    <div class="row nowrap"><div class="id">${pb(a.platform)}<div style="min-width:0"><div class="h">${esc(a.handle)}</div><div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}</div></div></div><div class="row nowrap" style="gap:6px">${liveBadge(a)}${openLink(a)}${mtag(a)}</div></div>
     <div class="stats"><div><div class="l">Followers</div><b>${fmtN(num(a.followers))}</b></div><div><div class="l">Camps</div><b>${s.camps}</b></div><div><div class="l">Posted</div><b>${s.posted}</b></div><div><div class="l">Views</div><b>${fmtN(s.views)}</b></div></div>
     ${row?'<div class="stack" style="--g:8px">':''}
     ${a.monetized==='Paid'&&cost?`<div><div class="row between small muted"><span>Paid back</span><span>${fmt$(s.earned)} / ${fmt$(cost)}</span></div><div class="bar gold"><i style="width:${Math.min(100,s.earned/cost*100)}%"></i></div></div>`:''}
@@ -979,7 +981,7 @@ function vAcct(id,sec){
   <div class="crumbs"><a href="#/accts">Brands</a><span>/</span>${brand(a.brandId)?`<a href="#/brand/${a.brandId}">${esc(brand(a.brandId).name)}</a><span>/</span>`:''}${sec?`<a href="#/acct/${a.id}">${esc(a.handle)}</a><span>/</span><span>${ASEC.find(([k])=>k===sec)[1]}</span>`:`<span>${esc(a.handle)}</span>`}</div>
   <div class="card hero" style="border-top:3px solid ${PCOLOR[a.platform]}">
     ${pb(a.platform,'lg')}
-    <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${mtag(a)}<span class="chip">${esc(a.status)}</span>${brand(a.brandId)?`<a class="chip" href="#/brand/${a.brandId}" style="text-decoration:none">${esc(brand(a.brandId).name)}</a>`:''}</div>
+    <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${liveBadge(a)}${mtag(a)}<span class="chip">${esc(a.status)}</span>${brand(a.brandId)?`<a class="chip" href="#/brand/${a.brandId}" style="text-decoration:none">${esc(brand(a.brandId).name)}</a>`:''}</div>
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
     <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open on ${esc(a.platform)} ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
@@ -992,7 +994,7 @@ function acctOverview(a){
   const mine=TODOS.map((t,i)=>[t,i]).filter(([t])=>t.acct===a.id);
   const camps=acctCamps(a);
   return `<div class="grid g4">
-    ${tile('Followers',fmtN(num(a.followers)),`${sgn(gain([a],7))} this week · ${sgn(gain([a],30))} in 30 days`)}
+    ${tile('Followers',fmtN(num(a.followers)),`${sgn(gain([a],7))} this week · ${sgn(gain([a],30))} in 30 days${a.live?` · live ${ago(a.live.updated)}`:''}`)}
     ${tile('Clips posted',s.posted,`${s.clips-s.posted} in progress`)}
     ${tile('Views',fmtN(s.views),s.posted?`${fmtN(s.views/s.posted)} avg per clip`:'—')}
     ${a.monetized==='Paid'&&cost?tile('Payback',Math.round(s.earned/cost*100)+'%',`${fmt$(s.earned)} of ${fmt$(cost)} earned back`):tile('Est. earnings',fmt$(s.earned),'from campaign rates')}
@@ -1366,6 +1368,14 @@ function vSettings(){
     <div><label class="f">Your niche</label><input id="s_n" value="${esc(s.niche)}"></div>
     <div class="full"><label class="f">Hashtag bank (space-separated)</label><textarea id="s_h">${esc(s.hashtagBank)}</textarea></div>
   </div><div><button class="btn primary" onclick="saveSettings()">Save settings</button></div></div>
+  <div class="card stack" id="live"><div class="row between"><h3>Live data</h3>${liveOn()?`<span class="chip ${LIVE.err?'b':'g'}">${LIVE.busy?'Syncing…':LIVE.err?'Problem':'Connected'}</span>`:'<span class="chip">Not connected</span>'}</div>
+    <div class="muted small">Pulls follower counts and Short views straight from YouTube every hour through your own Cloudflare Worker. Setup steps: <a href="https://github.com/ivanbyer-design/Clipper-App/blob/main/worker/README.md" target="_blank" rel="noopener">worker/README.md</a>. Instagram, TikTok and X come later.</div>
+    <div class="fields"><div><label class="f" for="s_lu">Worker URL</label><input id="s_lu" type="url" placeholder="https://clipper-live.yourname.workers.dev" value="${esc(s.liveUrl||'')}"></div>
+      <div><label class="f" for="s_lt">Access token (APP_TOKEN)</label><input id="s_lt" type="password" autocomplete="off" value="${esc(s.liveToken||'')}"></div></div>
+    <div class="row"><button class="btn primary" onclick="saveLive()">${liveOn()?'Save & sync now':'Connect'}</button>${liveOn()?'<button class="btn" onclick="liveSync(true)">Sync now</button><button class="btn danger" onclick="disconnectLive()">Disconnect</button>':''}</div>
+    ${liveOn()?`<div class="small muted">Tracking ${liveTargets().accounts.length} YouTube account${liveTargets().accounts.length===1?'':'s'} and ${liveTargets().videos.length} posted Short${liveTargets().videos.length===1?'':'s'}.${LIVE.ranAt?` Worker last checked ${ago(LIVE.ranAt)}.`:''}</div>`:''}
+    ${LIVE.err?`<div class="small" style="color:var(--bad)">${esc(LIVE.err)}</div>`:''}
+  </div>
   <div class="card stack"><h3>Backup</h3>
     <div class="muted small">Your data lives in this browser only. Clearing site data or switching devices loses it — export a backup weekly, and import it on any other device.</div>
     <div class="row"><button class="btn" onclick="exportJSON()">Export backup (.json)</button><label class="btn">Import backup<input type="file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"></label><button class="btn" onclick="exportCSV()">Export clips (.csv)</button></div>
@@ -1391,6 +1401,47 @@ function importJSON(inp){
   r.readAsText(f);
 }
 function resetAll(){if(!confirm('Erase all Clipper data in this browser? Export a backup first if you need it.'))return;LOAD_ERR=null;S=defaults();save();render();toast('Erased')}
+
+
+/* ---------- live data (Cloudflare Worker, see worker/README.md) ---------- */
+const ytVid=u=>{try{const x=new URL(u),h=x.hostname.replace(/^(www|m)\./,'');
+  if(h==='youtu.be')return x.pathname.slice(1,12);
+  if(h.endsWith('youtube.com')){const m=x.pathname.match(/^\/(shorts|embed|live)\/([\w-]{11})/);return m?m[2]:(x.searchParams.get('v')||'')}}catch(e){}return ''};
+let LIVE={busy:false,at:0,err:'',ranAt:0};
+const liveOn=()=>!!(S.settings.liveUrl&&S.settings.liveToken);
+const liveTargets=()=>({accounts:S.accounts.filter(a=>a.platform==='YouTube').map(a=>({id:a.id,platform:a.platform,handle:a.handle})),
+  videos:[...new Set(S.clips.map(c=>ytVid(c.postUrl)).filter(Boolean))].sort()});
+async function liveCall(path,opt={}){
+  const r=await fetch(S.settings.liveUrl.replace(/\/+$/,'')+path,{...opt,headers:{authorization:'Bearer '+S.settings.liveToken,'content-type':'application/json'}});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j;
+}
+async function liveSync(force){
+  if(!liveOn()||LIVE.busy)return;LIVE.busy=true;if(R.v==='settings')render();
+  try{
+    const t=liveTargets(),sig=JSON.stringify(t);
+    const j=force||sig!==S.settings.liveSig?await liveCall('/track',{method:'POST',body:sig}):await liveCall('/stats?refresh=1');
+    S.settings.liveSig=sig;applyLive(j);LIVE.err=(j.errors||[]).join(' · ');LIVE.ranAt=j.ranAt||0;
+  }catch(e){LIVE.err=e.message==='Failed to fetch'?'Could not reach the worker — check the URL and ALLOWED_ORIGINS':e.message}
+  finally{LIVE.busy=false;LIVE.at=Date.now();render()}
+}
+function applyLive(j){
+  Object.entries(j.accounts||{}).forEach(([id,d])=>{const a=acct(id);if(!a)return;
+    a.live={followers:d.followers,views:d.views,videos:d.videos,updated:d.updated};
+    Object.entries(d.hist||{}).forEach(([day,f])=>{if(!(a.fhist||[]).some(h=>h.d===day&&h.f===f))recordFollowers(a,f,day)});
+  });
+  S.clips.forEach(c=>{const v=(j.videos||{})[ytVid(c.postUrl)];if(!v)return;
+    c.liveViews=v.views;c.liveAt=v.updated;
+    const da=daysAgo(c.postedAt);
+    if(da!=null&&da>=2&&da<=3&&!c.views48)c.views48=String(v.views);
+    if(da!=null&&da>=7&&da<=8&&!c.views7)c.views7=String(v.views);
+  });
+  save();
+}
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'just now':m<60?`${m}m ago`:m<1440?`${Math.round(m/60)}h ago`:`${Math.round(m/1440)}d ago`};
+const liveBadge=a=>a.live&&a.live.updated?`<span class="chip live" title="Live from ${esc(a.platform)} · updated ${ago(a.live.updated)}"><i></i>Live</span>`:'';
+function saveLive(){S.settings.liveUrl=document.getElementById('s_lu').value.trim();S.settings.liveToken=document.getElementById('s_lt').value.trim();S.settings.liveSig='';save();liveSync(true)}
+function disconnectLive(){if(!confirm('Disconnect live data? Logged history stays.'))return;S.settings.liveUrl=S.settings.liveToken=S.settings.liveSig='';S.accounts.forEach(a=>delete a.live);save();render()}
+setInterval(()=>{if(document.visibilityState==='visible')liveSync()},10*60e3);
 
 /* ---------- Pomodoro sidebar ---------- */
 const PK=LS_KEY+'.pomo';
@@ -1468,6 +1519,7 @@ setInterval(pTick,500);
 
 parseHash();
 render();
+liveSync();
 if(P.open)togglePomo(true);
 pTick();
 </script>
