@@ -14,12 +14,12 @@
   --accent:#c6ff3d;--accent-ink:#0d0f12;--accent-soft:rgba(198,255,61,.12);
   --warn:#ffb648;--bad:#ff6b6b;--good:#3ddc97;--gold:#ffcf3d;--gold-soft:rgba(255,207,61,.14);--radius:12px;
   --shadow:0 10px 40px rgba(0,0,0,.45);
-  --tt:#25f4ee;--yt:#ff3b30;--ig:#e1306c;
+  --tt:#25f4ee;--yt:#ff3b30;--ig:#e1306c;--x:#e7e9ea;
 }
 @media (prefers-color-scheme: light){
   :root{--bg:#f3f4f0;--panel:#ffffff;--panel2:#eef0ea;--line:#dcdfd6;--text:#15171b;--muted:#5d6470;
   --accent:#4f7300;--accent-ink:#ffffff;--accent-soft:rgba(79,115,0,.10);--warn:#a86400;--bad:#c62828;--good:#16804f;
-  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;}
+  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;--x:#0f1419;}
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -110,6 +110,9 @@ label.f{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-b
 .pb.TikTok{background:#010101;color:#25f4ee;box-shadow:inset -2px -2px 0 #fe2c55}
 .pb.YouTube{background:#ff0000}
 .pb.Instagram{background:linear-gradient(45deg,#f58529,#dd2a7b 55%,#8134af)}
+.pb.X{background:#000;color:#fff;font-size:15px;box-shadow:inset 0 0 0 1px #333}
+.pb.X.lg{font-size:24px}
+.pb.X.xs{font-size:11px}
 .acard{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--pc,var(--line));border-radius:var(--radius);padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:12px;transition:border-color .15s,transform .15s;min-width:0}
 .acard:hover{border-color:var(--muted);border-top-color:var(--pc);transform:translateY(-1px)}
 .acard .h{font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -206,9 +209,9 @@ const LS_KEY='clipper.v1';
 const FLOW=[['accts','Accounts',['accts','acct']],['camps','Campaigns',['camps','camp']],['content','Content',['content']],['review','Review',['review']]];
 const TOOLS=[['caps','Captions'],['play','Playbook'],['settings','Settings']];
 const STAGES=['Idea','Editing','Ready','Posted','Submitted','Approved','Paid','Rejected'];
-const PLATFORMS=['TikTok','YouTube','Instagram'];
-const PSHORT={TikTok:'TT',YouTube:'YT',Instagram:'IG'};
-const PCOLOR={TikTok:'var(--tt)',YouTube:'var(--yt)',Instagram:'var(--ig)'};
+const PLATFORMS=['TikTok','YouTube','Instagram','X'];
+const PSHORT={TikTok:'TT',YouTube:'YT',Instagram:'IG',X:'𝕏'};
+const PCOLOR={TikTok:'var(--tt)',YouTube:'var(--yt)',Instagram:'var(--ig)',X:'var(--x)'};
 const HOOKS=['Money claim','Hot take','Story','Funny','Question','Shock stat','Reaction','Other'];
 const EDIT_STYLES=['Talking-head crop','Split screen','Gameplay / B-roll background','Big bold captions','Word-by-word captions','Zoom punch-ins','Meme / SFX inserts','Voiceover','Text story','Reaction overlay'];
 const MARKETS=['Whop Content Rewards','Duzlo','Other'];
@@ -505,7 +508,7 @@ function vAccts(){
     </aside>
   </div>
   ${S.accounts.length+S.campaigns.length+S.clips.length===0?`<div class="card stack"><h3>Get started</h3>
-    <div class="muted">1. Add your TikTok, YouTube and Instagram accounts — tag the pre-monetized ones as Paid. 2. Open an account and add the campaigns it runs. 3. Paste your source links and drive folders as resources. 4. Move clips through Content, then check Review weekly.</div>
+    <div class="muted">1. Add your TikTok, YouTube, Instagram and X accounts — tag the pre-monetized ones as Paid. 2. Open an account and add the campaigns it runs. 3. Paste your source links and drive folders as resources. 4. Move clips through Content, then check Review weekly.</div>
     <div class="row"><button class="btn primary" onclick="editAcct()">Add first account</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
   </div>`;
 }
@@ -570,6 +573,7 @@ function embedOf(u){
       const v=x.searchParams.get('v');if(v)return {src:`https://www.youtube.com/embed/${encodeURIComponent(v)}`};
     }
     if(h.endsWith('tiktok.com')&&(m=x.pathname.match(/\/video\/(\d+)/)))return {src:`https://www.tiktok.com/embed/v2/${m[1]}`,cls:'tall'};
+    if((h==='x.com'||h==='twitter.com')&&(m=x.pathname.match(/\/status(?:es)?\/(\d+)/)))return {src:`https://platform.twitter.com/embed/Tweet.html?id=${m[1]}&theme=dark`,cls:'doc'};
     if(h.endsWith('instagram.com')&&(m=x.pathname.match(/\/(p|reels?|tv)\/([\w-]+)/)))return {src:`https://www.instagram.com/${m[1]==='reels'?'reel':m[1]}/${m[2]}/embed`,cls:'tall'};
     if(h==='drive.google.com'){
       if(m=x.pathname.match(/\/file\/d\/([\w-]+)/))return {src:`https://drive.google.com/file/d/${m[1]}/preview`};
@@ -586,7 +590,7 @@ function resBox(scope,id,title,blurb){
   return `<div class="sec-h"><h2>${title}</h2><span class="muted small">${list.length} saved</span></div>
   <div class="card stack">
     <div class="muted small">${blurb}</div>
-    <div class="paste"><input id="res_u" type="url" placeholder="Paste a YouTube, TikTok, Instagram, Google Drive or any link…" onkeydown="if(event.key==='Enter')addRes('${scope}','${id}')"><input id="res_t" placeholder="Label (optional)" onkeydown="if(event.key==='Enter')addRes('${scope}','${id}')"><button class="btn primary" onclick="addRes('${scope}','${id}')">Add</button></div>
+    <div class="paste"><input id="res_u" type="url" placeholder="Paste a YouTube, TikTok, Instagram, X, Google Drive or any link…" onkeydown="if(event.key==='Enter')addRes('${scope}','${id}')"><input id="res_t" placeholder="Label (optional)" onkeydown="if(event.key==='Enter')addRes('${scope}','${id}')"><button class="btn primary" onclick="addRes('${scope}','${id}')">Add</button></div>
   </div>
   ${list.length?`<div class="grid g3" style="align-items:start">${list.map(resCard).join('')}</div>`:''}`;
 }
@@ -864,7 +868,7 @@ function buildPrompt(){
   const c=S.clips.find(x=>x.id===capState.clipId);const k=c&&camp(c.campaignId);const a=c&&acct(c.accountId);
   const tr=document.getElementById('cap_tr').value.trim();
   if(!tr){toast('Paste the transcript first');return}
-  const p=`You're writing post copy for a short-form clip going on ${a?a.platform:'TikTok, YouTube Shorts and Instagram Reels'}.
+  const p=`You're writing post copy for a short-form clip going on ${a?a.platform:'TikTok, YouTube Shorts, Instagram Reels and X'}.
 Niche: ${(a&&a.niche)||S.settings.niche||'general'}
 ${k?`Campaign: ${k.name}\n`:''}${k&&k.requiredTags?`Required tags/mentions (must appear exactly): ${k.requiredTags}\n`:''}${c&&c.hookType?`Hook angle I'm going for: ${c.hookType}\n`:''}
 Transcript:
@@ -886,7 +890,7 @@ function saveCap(){const c=S.clips.find(x=>x.id===capState.clipId);if(!c)return;
 /* ---------- Playbook ---------- */
 function vPlay(){
   const steps=[
-    ['Accounts',['One niche per account, same handle on TikTok, YouTube and Instagram','Tag pre-monetized accounts as Paid and log what you paid — track payback','Warm new pages 3–5 days: scroll and engage in your niche before posting','Warm bought pages in your niche too before the first campaign post']],
+    ['Accounts',['One niche per account, same handle on TikTok, YouTube, Instagram and X','Tag pre-monetized accounts as Paid and log what you paid — track payback','Warm new pages 3–5 days: scroll and engage in your niche before posting','Warm bought pages in your niche too before the first campaign post']],
     ['Campaigns',['Rate of $1+ per 1,000 views, with plenty of budget left','Check the per-clip cap and minimum views','Make sure your platforms are allowed','Read the whole brief — missed tags are the #1 rejection reason','Save the brief, source episodes and examples as resources']],
     ['Content — find moments',['Run the source through Opus Clip for candidate timestamps','Watch the top 10 yourself — you pick, not the AI','Hook in the first 2 seconds, makes sense alone, has a peak','Aim for 20–45 seconds · drop them in with Bulk add']],
     ['Content — edit',['9:16 framed on the speaker, cut dead air and filler','Hook text on screen from frame one','Captions burned in, light zooms and sound effects','Add your own layer (title, context, voiceover) — platforms cut reach for low-effort reuploads','Tag the hook type and edit style on every clip']],
