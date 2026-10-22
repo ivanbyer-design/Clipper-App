@@ -15,11 +15,13 @@
   --warn:#ffb648;--bad:#ff6b6b;--good:#3ddc97;--gold:#ffcf3d;--gold-soft:rgba(255,207,61,.14);--radius:12px;
   --shadow:0 10px 40px rgba(0,0,0,.45);
   --tt:#25f4ee;--yt:#ff3b30;--ig:#e1306c;--x:#e7e9ea;--hdr:#060708;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
 }
 @media (prefers-color-scheme: light){
   :root{--bg:#f3f4f0;--panel:#ffffff;--panel2:#eef0ea;--line:#dcdfd6;--text:#15171b;--muted:#5d6470;
   --accent:#4f7300;--accent-ink:#ffffff;--accent-soft:rgba(79,115,0,.10);--warn:#a86400;--bad:#c62828;--good:#16804f;
-  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;--x:#0f1419;--hdr:#15171b;}
+  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;--x:#0f1419;--hdr:#15171b;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;}
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -67,7 +69,8 @@ main>*{max-width:1440px;margin-left:auto;margin-right:auto}
 .nav-item .star{color:var(--gold);font-size:12px}
 .nav-acct{gap:10px}
 .nav-acct.open{font-weight:600}
-.nav-sub{margin:0 0 8px 21px;padding-left:8px;border-left:1px solid var(--line)}
+.nav-sub{margin:0 0 6px 16px;padding-left:6px;border-left:1px solid var(--line)}
+.nav-sub .nav-sub{margin-left:12px}
 .nav-sub .nav-item{padding:7px 10px;font-size:13px;gap:10px}
 .nav-sep{height:1px;background:var(--line);margin:12px 4px}
 .side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
@@ -203,6 +206,33 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .insight .i.w{background:var(--gold-soft);color:var(--warn)}
 .flash{animation:flash 1.8s ease-out 1;border-radius:10px}
 @keyframes flash{0%,45%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+/* charts */
+.chart{position:relative;width:100%}
+.chart svg{display:block;overflow:visible}
+.chart .grid line{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--muted);font:11px Inter}
+.chart .lbl{fill:var(--text);font:600 12px Inter}
+.chart .xh{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.chart-empty{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:16px;font-size:14px}
+.ctip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;box-shadow:var(--shadow);font-size:12px;min-width:150px;z-index:5;display:none}
+.ctip .d{color:var(--muted);margin-bottom:4px}
+.ctip .r{display:flex;align-items:center;gap:8px;margin-top:3px;white-space:nowrap}
+.ctip .r i{width:12px;height:2px;border-radius:1px;flex:none}
+.ctip .r b{font-variant-numeric:tabular-nums;color:var(--text)}
+.ctip .r span{color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:2px;border-radius:1px}
+.ctable{margin-top:8px}
+.ctable summary{cursor:pointer}
+.ctable table{font-size:12px;margin-top:6px}
+.spark{width:100%;height:42px;display:block}
+.spark-empty{height:42px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:8px}
+/* brands */
+.blogo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font:700 16px "Space Grotesk";background:var(--accent-soft);color:var(--accent);overflow:hidden;flex:none}
+.blogo img{width:100%;height:100%;object-fit:cover;display:block}
+.blogo.lg{width:64px;height:64px;font-size:22px;border-radius:16px}
+.blogo.xs{width:22px;height:22px;border-radius:6px;font-size:9px}
 /* pomodoro drawer */
 .drawer{position:fixed;top:0;right:0;bottom:0;width:340px;max-width:100vw;background:var(--panel);border-left:1px solid var(--line);z-index:40;transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column;box-shadow:var(--shadow);visibility:hidden}
 .drawer.open{transform:none;visibility:visible}
@@ -271,16 +301,20 @@ const WARMUP=['Profile pic, name & bio set','Day 1 — scroll & engage niche','D
 const CAMP_CHECKS=['Read the full brief','Source has strong moments','My platforms are allowed'];
 
 /* ---------- state ---------- */
-const defaults=()=>({settings:{dailyTarget:3,feePct:10,niche:'Trading / finance',hashtagBank:'#trading #daytrading #futures #stockmarket #money #finance #investing'},accounts:[],campaigns:[],clips:[],resources:[]});
+const defaults=()=>({settings:{dailyTarget:3,feePct:10,niche:'Trading / finance',hashtagBank:'#trading #daytrading #futures #stockmarket #money #finance #investing'},brands:[],accounts:[],campaigns:[],clips:[],resources:[]});
 function migrate(d){
   const pm={'YouTube Shorts':'YouTube','Instagram Reels':'Instagram'};
-  d.accounts.forEach(a=>{a.platform=pm[a.platform]||a.platform;if(!a.monetized)a.monetized='Unpaid'});
+  d.accounts.forEach(a=>{a.platform=pm[a.platform]||a.platform;if(!a.monetized)a.monetized='Unpaid';if(a.brandId==null)a.brandId='';
+    if(!Array.isArray(a.fhist)){const n=new Date(),d=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+      a.fhist=a.followers!==''&&a.followers!=null?[{d,f:parseFloat(a.followers)||0}]:[]}});
+  if(!Array.isArray(d.brands))d.brands=[];
   d.campaigns.forEach(k=>{if(!Array.isArray(k.accountIds))k.accountIds=[];k.platforms=(k.platforms||[]).map(p=>pm[p]||p)});
   d.clips.forEach(c=>{if(c.postUrl==null)c.postUrl=c.urlTT||c.urlYT||c.urlIG||'';if(!Array.isArray(c.editStyle))c.editStyle=[];if(c.accountId==null)c.accountId=''});
   if(!Array.isArray(d.resources))d.resources=[];
   return d;
 }
 function hydrate(d){const base=defaults();return migrate({...base,...d,settings:{...base.settings,...(d.settings||{})}})}
+let LOAD_ERR=null;
 let S=load();
 let R={v:'accts',id:''};
 let acctFilter='all';
@@ -291,10 +325,11 @@ let capState={clipId:'',transcript:'',tags:[]};
 let MED=0;
 
 function load(){
-  try{const r=localStorage.getItem(LS_KEY);if(r)return hydrate(JSON.parse(r))}catch(e){}
+  let r=null;try{r=localStorage.getItem(LS_KEY)}catch(e){}
+  if(r){try{return hydrate(JSON.parse(r))}catch(e){LOAD_ERR=e;console.error('Clipper: could not read saved data',e)}}
   return defaults();
 }
-function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){toast('Could not save — export a backup in Settings')}}
+function save(){if(LOAD_ERR){toast('Saved data could not be read — not overwriting it. Export a backup in Settings.');return}try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){toast('Could not save — export a backup in Settings')}}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl=u=>/^https?:\/\//i.test(String(u||'').trim())?String(u).trim():'';
@@ -345,7 +380,7 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied')}catch(_){toast('Copy failed')}ta.remove()}}
 
 /* ---------- routing ---------- */
-const VIEWS={accts:()=>vAccts(),acct:()=>vAcct(R.id,R.sec),camps:()=>vCamps(),camp:()=>vCamp(R.id),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
+const VIEWS={accts:()=>vAccts(),brand:()=>vBrand(R.id),acct:()=>vAcct(R.id,R.sec),camps:()=>vCamps(),camp:()=>vCamp(R.id),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
 function parseHash(){const [v,id,sec]=location.hash.replace(/^#\/?/,'').split('/');R={v:VIEWS[v]?v:'accts',id:id||'',sec:sec||''}}
 function go(v,id,sec){const h='#/'+[v,id,sec].filter(Boolean).join('/');if(location.hash===h)render();else location.hash=h}
 window.addEventListener('hashchange',()=>{parseHash();closeSide();window.scrollTo(0,0);render()});
@@ -358,7 +393,9 @@ function render(){
   MED=a?median(S.clips.filter(c=>c.accountId===a.id&&isPosted(c)).map(views).filter(Boolean)):medViews();
   renderSide();
   document.getElementById('todayLbl').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  CHARTS={};chartN=0;
   document.getElementById('view').innerHTML=VIEWS[R.v]();
+  drawCharts();
   if(R.v==='caps')capPreview();
   applyFocus();
 }
@@ -395,15 +432,21 @@ const IC={
   settings:svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
 };
 function sideCtx(){
-  if(R.v==='acct'&&acct(R.id))return {a:acct(R.id),sec:ASEC.some(([k])=>k===R.sec)?R.sec:''};
-  if(R.v==='camp'){const k=camp(R.id);const aid=k&&k.accountIds.find(acct);if(aid)return {a:acct(aid),sec:'camps'}}
-  return {a:null,sec:null};
+  let a=null,sec=null,b=null;
+  if(R.v==='acct'&&acct(R.id)){a=acct(R.id);sec=ASEC.some(([k])=>k===R.sec)?R.sec:''}
+  else if(R.v==='camp'){const k=camp(R.id);const aid=k&&k.accountIds.find(acct);if(aid){a=acct(aid);sec='camps'}}
+  if(R.v==='brand')b=brand(R.id);else if(a)b=brand(a.brandId);
+  return {a,sec,b,bid:b?b.id:(a?'':null)};
 }
 function renderSide(){
-  const {a,sec}=sideCtx();
-  const item=(href,icon,label,on,extra='')=>`<a class="nav-item ${on?'active':''}" href="${href}">${icon}<span class="h">${label}</span>${extra}</a>`;
-  const accts=[...S.accounts].sort((x,y)=>(y.monetized==='Paid')-(x.monetized==='Paid')||PLATFORMS.indexOf(x.platform)-PLATFORMS.indexOf(y.platform));
+  const {a,sec,b,bid}=sideCtx();
+  const item=(href,icon,label,on,extra='',cls='')=>`<a class="nav-item ${cls} ${on?'active':''}" href="${href}">${icon}<span class="h">${label}</span>${extra}</a>`;
   const cnt=x=>({camps:acctCamps(x).length,content:S.clips.filter(c=>c.accountId===x.id).length,res:S.resources.filter(r=>r.accountId===x.id&&!r.campaignId).length});
+  const due=ids=>TODOS.filter(t=>ids.includes(t.acct)).length;
+  const acctRow=x=>{const open=a&&a.id===x.id;const c=cnt(x);const d=due([x.id]);
+    return `<a class="nav-item nav-acct ${open?'open':''} ${open&&sec===''?'active':''}" href="#/acct/${x.id}">${pb(x.platform,'xs')}<span class="h">${esc(x.handle)}</span>${x.monetized==='Paid'?'<span class="star" title="Paid">★</span>':''}${d&&!open?`<span class="c w">${d}</span>`:''}</a>
+    ${open?`<div class="nav-sub">${ASEC.filter(([k])=>k).map(([k,l])=>item(`#/acct/${x.id}/${k}`,IC[k],l,sec===k,c[k]!=null?`<span class="c">${c[k]}</span>`:'')).join('')}</div>`:''}`};
+  const unb=brandAccts('');
   document.getElementById('side').innerHTML=`
   <div class="sb-add" id="sbAdd">
     <button class="sb-add-btn" onclick="toggleAdd(event)">${svg('<path d="M12 5v14M5 12h14"/>')}Add</button>
@@ -411,16 +454,19 @@ function renderSide(){
       <button class="dd-opt" onclick="addPick(()=>editClip())">New clip<small>One moment to edit and post</small></button>
       <button class="dd-opt" onclick="addPick(bulkAdd)">Bulk add moments<small>Paste timestamps from Opus Clip</small></button>
       <button class="dd-opt" onclick="addPick(()=>editCamp(null,${a?`{accountIds:['${a.id}']}`:'null'}))">New campaign<small>${a?`Linked to ${esc(a.handle)}`:'From Whop, Duzlo or anywhere'}</small></button>
-      <button class="dd-opt" onclick="addPick(()=>editAcct())">New account<small>TikTok, YouTube, Instagram or X</small></button>
+      <button class="dd-opt" onclick="addPick(()=>editAcct())">New account<small>${b?`Under ${esc(b.name)}`:'TikTok, YouTube, Instagram or X'}</small></button>
+      <button class="dd-opt" onclick="addPick(()=>editBrand())">New brand<small>Groups a set of social accounts</small></button>
     </div>
   </div>
   <nav>
     ${item('#/accts',IC.dash,'Dashboard',R.v==='accts',TODOS.length?`<span class="c">${TODOS.length}</span>`:'')}
-    <div class="nav-lbl">Accounts</div>
-    ${accts.length?accts.map(x=>{const open=a&&a.id===x.id;const c=cnt(x);const due=TODOS.filter(t=>t.acct===x.id).length;
-      return `<a class="nav-item nav-acct ${open?'open':''}" href="#/acct/${x.id}">${pb(x.platform,'xs')}<span class="h">${esc(x.handle)}</span>${x.monetized==='Paid'?'<span class="star" title="Paid">★</span>':''}${due&&!open?`<span class="c w">${due}</span>`:''}</a>
-      ${open?`<div class="nav-sub">${ASEC.map(([k,l])=>item(`#/acct/${x.id}${k?'/'+k:''}`,IC[k],l,sec===k,c[k]!=null?`<span class="c">${c[k]}</span>`:'')).join('')}</div>`:''}`}).join('')
-    :`<a class="nav-item" href="javascript:void 0" onclick="editAcct()"><span class="h muted">+ Add your first account</span></a>`}
+    <div class="nav-lbl">Brands</div>
+    ${S.brands.map(x=>{const open=bid===x.id;const as=brandAccts(x.id);const d=due(as.map(y=>y.id));
+      return `<a class="nav-item nav-acct ${open?'open':''} ${R.v==='brand'&&open?'active':''}" href="#/brand/${x.id}">${blogo(x,'xs')}<span class="h">${esc(x.name)}</span>${d&&!open?`<span class="c w">${d}</span>`:`<span class="c">${as.length}</span>`}</a>
+      ${open?`<div class="nav-sub">${as.map(acctRow).join('')||'<div class="muted small" style="padding:6px 10px">No accounts yet</div>'}</div>`:''}`}).join('')}
+    ${unb.length?`<a class="nav-item nav-acct muted ${bid===''?'open':''}" href="#/accts">${svg('<circle cx="12" cy="12" r="9"/><path d="M9 12h6"/>')}<span class="h">No brand</span><span class="c">${unb.length}</span></a>
+      ${bid===''?`<div class="nav-sub">${unb.map(acctRow).join('')}</div>`:''}`:''}
+    ${S.brands.length?'':`<a class="nav-item" href="javascript:void 0" onclick="editBrand()"><span class="h muted">+ Create your first brand</span></a>`}
     <div class="nav-sep"></div>
     ${item('#/camps',IC.allcamps,'All campaigns',R.v==='camps')}
     ${item('#/caps',IC.caps,'Captions',R.v==='caps')}
@@ -453,6 +499,7 @@ function field(f,val){
   if(f.type==='section')return `<div class="section-t">${esc(f.label)}</div>`;
   let input='';
   if(f.type==='select')input=`<select id="${id}">${optsOf(f).map(([v,l])=>`<option value="${esc(v)}" ${String(val??'')===String(v)?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
+  else if(f.type==='image')input=`<div class="row"><input type="hidden" id="${id}" value="${esc(val)}"><span class="blogo lg" id="${id}_prev">${val?`<img src="${esc(val)}" alt="">`:'—'}</span><label class="btn sm">Upload image<input type="file" accept="image/*" style="display:none" onchange="pickLogo(this)"></label>${'<button type="button" class="btn sm ghost" onclick="clearLogo()">Remove</button>'}</div>`;
   else if(f.type==='textarea')input=`<textarea id="${id}" placeholder="${esc(f.ph||'')}">${esc(val)}</textarea>`;
   else if(f.type==='multi'){const arr=val||[];const o=optsOf(f);
     input=o.length?`<div class="checks ${o.length>6?'cols':''}" id="${id}">${o.map(([v,l])=>`<label><input type="checkbox" value="${esc(v)}" ${arr.includes(v)?'checked':''}>${esc(l)}</label>`).join('')}</div>`:`<div class="muted small" id="${id}">${esc(f.none||'Nothing to pick yet.')}</div>`}
@@ -569,24 +616,156 @@ function editCamp(id,preset){
 const ACCT_FIELDS=[
   {k:'platform',label:'Platform',type:'select',options:PLATFORMS},
   {k:'handle',label:'Handle',ph:'@yourpage'},
+  {k:'brandId',label:'Brand',type:'select',options:()=>[['','— No brand —'],...S.brands.map(b=>[b.id,b.name])]},
   {k:'monetized',label:'Monetization',type:'select',options:[['Unpaid','Not monetized'],['Paid','Paid — pre-monetized']]},
   {k:'cost',label:'Price paid for account ($)',type:'number',hint:'Pre-monetized accounts only — tracks when it pays itself back.'},
   {k:'url',label:'Profile link',type:'url',ph:'https://'},
   {k:'niche',label:'Niche'},
   {k:'status',label:'Status',type:'select',options:ACCT_STATUS},
   {k:'created',label:'Created / bought on',type:'date'},
-  {k:'followers',label:'Followers',type:'number'},
+  {k:'followers',label:'Followers',type:'number',hint:'Changing this logs today\'s count on the growth graph.'},
   {k:'warmup',label:'Warm-up checklist',type:'multi',options:WARMUP},
   {k:'notes',label:'Notes (login email, bio text, etc. — no passwords)',type:'textarea'},
 ];
 function editAcct(id){
-  const a=id?S.accounts.find(x=>x.id===id):{id:uid(),platform:PLATFORMS[0],monetized:'Unpaid',status:'Warming up',created:today(),niche:S.settings.niche,warmup:[]};
-  openForm(id?'Edit account':'New account',ACCT_FIELDS,a,o=>{if(!o.handle)o.handle='@new';if(o.handle[0]!=='@')o.handle='@'+o.handle;upsert(S.accounts,o)},
-    id?()=>{S.accounts=S.accounts.filter(x=>x.id!==id);S.clips.forEach(c=>{if(c.accountId===id)c.accountId=''});S.campaigns.forEach(k=>{k.accountIds=k.accountIds.filter(x=>x!==id)});S.resources=S.resources.filter(r=>r.accountId!==id||r.campaignId);if(R.v==='acct')go('accts')}:null);
+  const ctxB=R.v==='brand'?R.id:R.v==='acct'&&acct(R.id)?acct(R.id).brandId:'';
+  const a=id?S.accounts.find(x=>x.id===id):{id:uid(),platform:PLATFORMS[0],monetized:'Unpaid',status:'Warming up',created:today(),niche:(brand(ctxB)||{}).niche||S.settings.niche,warmup:[],fhist:[],brandId:ctxB||''};
+  const before=id?String(a.followers??''):'';
+  openForm(id?'Edit account':'New account',ACCT_FIELDS,a,o=>{if(!o.handle)o.handle='@new';if(o.handle[0]!=='@')o.handle='@'+o.handle;
+    o.fhist=[...(a.fhist||[])];if(o.followers!==''&&o.followers!==before)recordFollowers(o,o.followers);upsert(S.accounts,o)},
+    id?()=>{S.accounts=S.accounts.filter(x=>x.id!==id);S.clips.forEach(c=>{if(c.accountId===id)c.accountId=''});S.campaigns.forEach(k=>{k.accountIds=k.accountIds.filter(x=>x!==id)});S.resources=S.resources.filter(r=>r.accountId!==id||r.campaignId);if(R.v==='acct')a.brandId&&brand(a.brandId)?go('brand',a.brandId):go('accts')}:null);
 }
 const tile=(k,v,s)=>`<div class="card tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
 
-/* ---------- 1. Accounts dashboard ---------- */
+/* ---------- follower history ---------- */
+const DAY=864e5;
+const toT=d=>new Date(d+'T00:00:00').getTime();
+function recordFollowers(a,v,d){
+  d=d||today();a.followers=String(num(v));
+  a.fhist=(a.fhist||[]).filter(h=>h.d!==d);a.fhist.push({d,f:num(v)});
+  a.fhist.sort((x,y)=>x.d.localeCompare(y.d));
+  const last=a.fhist[a.fhist.length-1];a.followers=String(last.f);
+}
+const acctPts=a=>(a.fhist||[]).map(h=>({t:toT(h.d),v:num(h.f)}));
+function valAt(pts,t){let v=null;for(const p of pts){if(p.t<=t)v=p.v;else break}return v}
+/* sum of several accounts' followers, carried forward between logs */
+function sumPts(accts){
+  const all=accts.map(acctPts).filter(p=>p.length);
+  const ts=[...new Set(all.flatMap(p=>p.map(x=>x.t)))].sort((x,y)=>x-y);
+  return ts.map(t=>({t,v:all.reduce((s,p)=>s+(valAt(p,t)??0),0)}));
+}
+/* followers gained over the last n days (accounts logged later count from their first log) */
+function gain(accts,n){
+  const tp=toT(today())-n*DAY;
+  return accts.reduce((s,a)=>{const p=acctPts(a);if(!p.length)return s;const past=valAt(p,tp)??p[0].v;return s+(p[p.length-1].v-past)},0);
+}
+const sgn=n=>(n>0?'+':n<0?'−':'')+fmtN(Math.abs(n));
+const lastLog=a=>{const h=a.fhist||[];return h.length?h[h.length-1].d:''};
+
+/* ---------- charts (hand-drawn SVG line charts with hover) ---------- */
+const SERIES=['var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)','var(--s6)','var(--s7)','var(--s8)'];
+let CHARTS={},chartN=0;
+const fmtD=t=>new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+function chartBox(series,opts={}){
+  const id='ch'+(++chartN);CHARTS[id]={series,opts};
+  const multi=series.length>1;
+  const ts=[...new Set(series.flatMap(s=>s.points.map(p=>p.t)))].sort((x,y)=>x-y);
+  return `${multi?`<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join('')}</div>`:''}
+  <div class="chart" id="${id}" style="height:${opts.h||220}px" role="img" aria-label="${esc(opts.label||'Followers over time')}"></div>
+  ${ts.length?`<details class="small muted ctable"><summary>Data table</summary><div class="tw"><table><thead><tr><th>Date</th>${series.map(s=>`<th class="num">${esc(s.name)}</th>`).join('')}</tr></thead><tbody>
+    ${ts.slice().reverse().slice(0,60).map(t=>`<tr><td>${fmtD(t)}</td>${series.map(s=>{const v=valAt(s.points,t);return `<td class="num">${v==null?'—':Math.round(v).toLocaleString()}</td>`}).join('')}</tr>`).join('')}
+  </tbody></table></div></details>`:''}`;
+}
+function niceStep(r){const e=Math.pow(10,Math.floor(Math.log10(r||1))),f=r/e;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e}
+function drawChart(id){
+  const el=document.getElementById(id),spec=CHARTS[id];if(!el||!spec)return;
+  const ser=spec.series.filter(s=>s.points.length);
+  if(!ser.length){el.innerHTML=`<div class="chart-empty">No follower history yet. Log a follower count to start the graph.</div>`;return}
+  const W=el.clientWidth||600,H=el.clientHeight||220;
+  const ts=[...new Set(ser.flatMap(s=>s.points.map(p=>p.t)))].sort((x,y)=>x-y);
+  let t1=Math.max(ts[ts.length-1],toT(today())),t0=Math.min(ts[0],t1-6*DAY);
+  const vals=ser.flatMap(s=>s.points.map(p=>p.v));
+  let lo=Math.min(...vals),hi=Math.max(...vals);
+  if(hi===lo){hi=hi+Math.max(10,hi*.1);lo=Math.max(0,lo-Math.max(10,lo*.1))}
+  if(lo<hi*.35)lo=0;
+  const step=niceStep((hi-lo)/4);lo=Math.floor(lo/step)*step;hi=Math.ceil(hi/step)*step;if(hi===lo)hi=lo+step;
+  const labels=ser.length>1&&ser.length<=4&&W>520;
+  const L=48,Rp=labels?96:16,T=12,B=26,pw=Math.max(40,W-L-Rp),ph=H-T-B;
+  const x=t=>L+(t-t0)/(t1-t0)*pw,y=v=>T+ph-(v-lo)/(hi-lo)*ph;
+  let g='';
+  for(let v=lo;v<=hi+step/2;v+=step)g+=`<line x1="${L}" x2="${L+pw}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L-8}" y="${y(v)+4}" text-anchor="end">${fmtN(v)}</text>`;
+  const nx=Math.max(2,Math.min(6,Math.floor(pw/110)));
+  let xl='';for(let i=0;i<=nx;i++){const t=t0+(t1-t0)*i/nx;xl+=`<text class="ax" x="${x(t)}" y="${H-6}" text-anchor="${i===0?'start':i===nx?'end':'middle'}">${fmtD(t)}</text>`}
+  let marks='';
+  ser.forEach(s=>{
+    const d=s.points.map((p,i)=>`${i?'L':'M'}${x(p.t).toFixed(1)},${y(p.v).toFixed(1)}`).join('');
+    if(ser.length===1&&s.points.length>1)marks+=`<path d="${d}L${x(s.points[s.points.length-1].t)},${y(lo)}L${x(s.points[0].t)},${y(lo)}Z" fill="${s.color}" opacity=".12"/>`;
+    marks+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(s.points.length<=40)marks+=s.points.map(p=>`<circle cx="${x(p.t)}" cy="${y(p.v)}" r="4" fill="${s.color}" stroke="var(--panel)" stroke-width="2"/>`).join('');
+  });
+  let lab='';
+  if(labels){
+    const ends=ser.map(s=>{const p=s.points[s.points.length-1];return {s,y:y(p.v),x:x(p.t),v:p.v}}).sort((a,b)=>a.y-b.y);
+    for(let i=1;i<ends.length;i++)if(ends[i].y-ends[i-1].y<14)ends[i].y=ends[i-1].y+14;
+    lab=ends.map(e=>`<text class="lbl" x="${L+pw+8}" y="${e.y+4}">${esc((n=>n.length>14?n.slice(0,13)+'…':n)(e.s.short||e.s.name))}</text>`).join('');
+  }
+  el.innerHTML=`<svg width="${W}" height="${H}"><g class="grid">${g}</g>${xl}${marks}${lab}
+    <line class="xh" y1="${T}" y2="${T+ph}" style="display:none"/><g class="hov"></g>
+    <rect x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair"/></svg><div class="ctip"></div>`;
+  const svgEl=el.querySelector('svg'),xh=el.querySelector('.xh'),hov=el.querySelector('.hov'),tip=el.querySelector('.ctip'),hit=el.querySelector('rect');
+  const show=px=>{
+    const t=t0+(px-L)/pw*(t1-t0);let tn=ts[0];for(const u of ts)if(Math.abs(u-t)<Math.abs(tn-t))tn=u;
+    const X=x(tn);xh.setAttribute('x1',X);xh.setAttribute('x2',X);xh.style.display='';
+    tip.textContent='';const hd=document.createElement('div');hd.className='d';hd.textContent=new Date(tn).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});tip.appendChild(hd);
+    let dots='';
+    ser.map(s=>({s,v:valAt(s.points,tn)})).filter(r=>r.v!=null).sort((a,b)=>b.v-a.v).forEach(({s,v})=>{
+      const r=document.createElement('div');r.className='r';const k=document.createElement('i');k.style.background=s.color;
+      const b=document.createElement('b');b.textContent=Math.round(v).toLocaleString();const n=document.createElement('span');n.textContent=s.name;
+      r.append(k,b,n);tip.appendChild(r);dots+=`<circle cx="${X}" cy="${y(v)}" r="5" fill="${s.color}" stroke="var(--panel)" stroke-width="2"/>`;
+    });
+    hov.innerHTML=dots;tip.style.display='block';
+    const tw=tip.offsetWidth;tip.style.left=Math.min(W-tw-4,Math.max(4,X+12>W-tw?X-tw-12:X+12))+'px';tip.style.top=T+'px';
+  };
+  hit.addEventListener('pointermove',e=>show(e.clientX-svgEl.getBoundingClientRect().left));
+  hit.addEventListener('pointerleave',()=>{xh.style.display='none';hov.innerHTML='';tip.style.display='none'});
+}
+function drawCharts(){Object.keys(CHARTS).forEach(drawChart)}
+let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(drawCharts,120)});
+/* one tiny trend line for cards (no axes; the card's numbers carry the values) */
+function spark(pts,w=240,h=42){
+  if(pts.length<2)return `<div class="spark-empty muted small">${pts.length?'Log again to see the trend':'No follower logs yet'}</div>`;
+  const t0=pts[0].t,t1=pts[pts.length-1].t,vs=pts.map(p=>p.v),lo=Math.min(...vs),hi=Math.max(...vs)||1;
+  const x=t=>(t-t0)/((t1-t0)||1)*(w-4)+2,y=v=>h-3-(v-lo)/((hi-lo)||1)*(h-6);
+  const d=pts.map((p,i)=>`${i?'L':'M'}${x(p.t).toFixed(1)},${y(p.v).toFixed(1)}`).join('');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}L${w-2},${h}L2,${h}Z" fill="var(--accent)" opacity=".12"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+
+/* ---------- brands ---------- */
+const brand=id=>S.brands.find(b=>b.id===id);
+const brandAccts=id=>S.accounts.filter(a=>(a.brandId||'')===(id||''));
+const blogo=(b,cls='')=>b&&b.logo?`<span class="blogo ${cls}"><img src="${esc(b.logo)}" alt=""></span>`:`<span class="blogo ${cls}">${esc(((b&&b.name)||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase())}</span>`;
+const BRAND_FIELDS=[
+  {k:'name',label:'Brand name',ph:'e.g. Edge Clips'},
+  {k:'niche',label:'Niche',ph:'e.g. Trading clips'},
+  {k:'logo',label:'Logo',type:'image'},
+  {k:'notes',label:'Notes',type:'textarea',ph:'Voice, colors, posting rules, bio text…'},
+];
+function editBrand(id){
+  const b=id?brand(id):{id:uid(),createdAt:today(),niche:S.settings.niche};
+  openForm(id?'Edit brand':'New brand',BRAND_FIELDS,b,o=>{if(!o.name)o.name='Untitled brand';upsert(S.brands,o);if(!id)setTimeout(()=>go('brand',o.id))},
+    id?()=>{S.accounts.forEach(a=>{if(a.brandId===id)a.brandId=''});S.brands=S.brands.filter(x=>x.id!==id);if(R.v==='brand')go('accts')}:null);
+}
+/* shrink an uploaded logo to a 160px square so it fits in browser storage */
+function pickLogo(inp){
+  const f=inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=160;const s=Math.min(img.width,img.height);
+    c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,160,160);
+    const url=c.toDataURL('image/webp',.88);document.getElementById('f_logo').value=url;document.getElementById('f_logo_prev').innerHTML=`<img src="${url}" alt="">`};img.src=r.result};
+  r.readAsDataURL(f);
+}
+function clearLogo(){document.getElementById('f_logo').value='';document.getElementById('f_logo_prev').textContent='—'}
+
+/* ---------- 1. Brands dashboard ---------- */
 function todos(){
   const t=[];
   const clipTask=(c,d,title,sub,field)=>{const a=acct(c.accountId);
@@ -603,39 +782,47 @@ function todos(){
   S.campaigns.filter(k=>k.status==='Active'&&k.budgetLeft!==''&&k.budgetLeft!=null&&num(k.budgetLeft)<20).forEach(k=>{const aid=k.accountIds.find(acct);
     t.push({acct:aid||'',d:'b',t:`Budget low: ${k.name}`,s:`${num(k.budgetLeft)}% left — update or switch campaigns`,to:aid?['acct',aid,'camps']:['camp',k.id],focus:{sel:'#c-'+k.id}})});
   S.accounts.forEach(a=>{
+    const ll=lastLog(a);
+    if(a.status!=='Paused'&&(!ll||daysAgo(ll)>=7))t.push({acct:a.id,d:'',t:`Update followers: ${a.handle} (${a.platform})`,s:ll?`Last logged ${daysAgo(ll)} days ago`:'Never logged — start the growth graph',to:['acct',a.id],focus:{sel:'#fol'}});
     if(a.status==='Warming up')t.push({acct:a.id,d:'',t:`Warm-up: ${a.handle} (${a.platform})`,s:`${(a.warmup||[]).length}/${WARMUP.length} steps done`,to:['acct',a.id],focus:{sel:'#warm'}});
     else if(a.status==='Active'&&!acctCamps(a).length)t.push({acct:a.id,d:'w',t:`No campaign on ${a.handle}`,s:'Link a campaign so posts earn',to:['acct',a.id,'camps'],focus:{sel:'#campadd'}});
   });
   return t;
 }
 const todoRow=(t,i)=>`<div class="todo" onclick="doTodo(${i})"><span class="dot ${t.d}"></span><div><div>${esc(t.t)}</div><div class="muted small">${esc(t.s)}</div></div></div>`;
+let homeChart='total';
 function vAccts(){
   const posted=S.clips.filter(isPosted);
   const td=posted.filter(c=>c.postedAt===today()).length,dt=num(S.settings.dailyTarget);
-  const paidN=S.accounts.filter(a=>a.monetized==='Paid').length;
-  const fol=S.accounts.reduce((s,a)=>s+num(a.followers),0);
+  const fol=S.accounts.reduce((s,a)=>s+num(a.followers),0),g30=gain(S.accounts,30);
   const earned=S.clips.reduce((s,c)=>s+est(c),0);
   const st=streak();
-  const counts={all:S.accounts.length,Paid:paidN,Unpaid:S.accounts.length-paidN};
-  PLATFORMS.forEach(p=>counts[p]=S.accounts.filter(a=>a.platform===p).length);
-  const filters=[['all','All'],...PLATFORMS.map(p=>[p,p]),['Paid','★ Paid'],['Unpaid','Unpaid']];
-  const list=S.accounts.filter(a=>acctFilter==='all'||a.platform===acctFilter||a.monetized===acctFilter)
-    .sort((a,b)=>(b.monetized==='Paid')-(a.monetized==='Paid')||PLATFORMS.indexOf(a.platform)-PLATFORMS.indexOf(b.platform));
   const loose=S.campaigns.filter(k=>!k.accountIds.some(acct));
+  const unb=brandAccts('');
+  const groups=[...S.brands.map(b=>({name:b.name,accts:brandAccts(b.id)})),...(unb.length?[{name:'No brand',accts:unb}]:[])].filter(g=>g.accts.length);
+  let series;
+  if(homeChart==='brand'){
+    const top=groups.slice(0,7),rest=groups.slice(7);
+    series=top.map((g,i)=>({name:g.name,color:SERIES[i],points:sumPts(g.accts)}));
+    if(rest.length)series.push({name:'Other',color:SERIES[7],points:sumPts(rest.flatMap(g=>g.accts))});
+  }else series=[{name:'All accounts',color:'var(--accent)',points:sumPts(S.accounts)}];
   return `<div class="stack">
-  <div class="row between"><div><h1>Accounts</h1><div class="muted small">Every page you run. Open one for its campaigns, content, review and resources.</div></div>
-    <button class="btn primary" onclick="editAcct()">+ Account</button></div>
+  <div class="row between"><div><h1>Brands</h1><div class="muted small">Each brand holds its social accounts. Open one to see its account hubs.</div></div>
+    <div class="row"><button class="btn" onclick="editAcct()">+ Account</button><button class="btn primary" onclick="editBrand()">+ Brand</button></div></div>
   <div class="grid g4">
-    ${tile('Accounts',S.accounts.length,`${paidN} paid · ${S.accounts.length-paidN} unpaid`)}
-    ${tile('Followers',fmtN(fol),'across all pages')}
+    ${tile('Followers',fmtN(fol),`<span style="color:${g30>0?'var(--good)':'inherit'}">${sgn(g30)}</span> in the last 30 days`)}
+    ${tile('Brands · accounts',`${S.brands.length} · ${S.accounts.length}`,`${S.accounts.filter(a=>a.monetized==='Paid').length} paid accounts`)}
     ${tile('Posted today',`${td} / ${dt}`,`<div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,dt?td/dt*100:0)}%"></i></div>`)}
     ${tile('Streak',`${st} day${st===1?'':'s'}`,st?'Keep it alive — post today':'Post today to start one')}
     ${tile('Est. earnings',fmt$(earned),`${fmtN(posted.reduce((s,c)=>s+views(c),0))} views logged`)}
   </div>
   <div class="dash">
     <div class="stack">
-      <div class="row">${filters.map(([k,l])=>`<span class="chip click ${acctFilter===k?'on':''}" onclick="acctFilter='${k}';render()">${l} ${counts[k]}</span>`).join('')}</div>
-      <div class="grid g3">${list.map(acctCard).join('')}<button class="addcard" onclick="editAcct()">+ Add account</button></div>
+      <div class="card"><div class="row between" style="margin-bottom:10px"><div><h3>Follower growth</h3><div class="muted small">All accounts${homeChart==='brand'?', split by brand':''}</div></div>
+        <div class="seg"><button class="${homeChart==='total'?'on':''}" onclick="homeChart='total';render()">Total</button><button class="${homeChart==='brand'?'on':''}" onclick="homeChart='brand';render()">By brand</button></div></div>
+        ${chartBox(series,{h:240,label:'Followers across all accounts over time'})}</div>
+      <div class="grid g3">${S.brands.map(brandCard).join('')}<button class="addcard" onclick="editBrand()">+ New brand</button></div>
+      ${unb.length?`<div class="sec-h"><h2>Accounts without a brand</h2><span class="muted small">Edit an account to put it under a brand</span></div><div class="grid g3">${unb.map(acctCard).join('')}</div>`:''}
       ${loose.length?`<a class="card row between" href="#/camps" style="text-decoration:none;color:inherit"><span>${loose.length} campaign${loose.length===1?' isn\'t':'s aren\'t'} linked to an account yet</span><span class="btn sm">Review ›</span></a>`:''}
     </div>
     <aside class="card"><div class="row between" style="margin-bottom:6px"><h3>Today</h3><span class="chip">${TODOS.length}</span></div>
@@ -643,10 +830,66 @@ function vAccts(){
       ${TODOS.length>12?`<div class="muted small" style="padding-top:8px">+${TODOS.length-12} more</div>`:''}
     </aside>
   </div>
-  ${S.accounts.length+S.campaigns.length+S.clips.length===0?`<div class="card stack"><h3>Get started</h3>
-    <div class="muted">1. Add your TikTok, YouTube, Instagram and X accounts — tag the pre-monetized ones as Paid. 2. Open an account and add the campaigns it runs. 3. Paste your source links and drive folders into its Resources. 4. Move clips through its Content board, then check its Review weekly.</div>
-    <div class="row"><button class="btn primary" onclick="editAcct()">Add first account</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
+  ${S.brands.length+S.accounts.length===0?`<div class="card stack"><h3>Get started</h3>
+    <div class="muted">1. Create a brand (like Edge Clips). 2. Add its TikTok, YouTube, Instagram and X accounts — tag pre-monetized ones as Paid. 3. Log follower counts weekly to watch them climb. 4. Open an account to run its campaigns, content and review.</div>
+    <div class="row"><button class="btn primary" onclick="editBrand()">Create first brand</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
   </div>`;
+}
+function brandCard(b){
+  const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
+  const fol=as.reduce((s,a)=>s+num(a.followers),0),g=gain(as,30);
+  const cs=S.clips.filter(c=>ids.has(c.accountId)),posted=cs.filter(isPosted);
+  const due=TODOS.filter(t=>ids.has(t.acct)).length;
+  return `<div class="acard" style="--pc:var(--accent)" onclick="go('brand','${b.id}')">
+    <div class="row nowrap"><div class="id">${blogo(b)}<div style="min-width:0"><div class="h">${esc(b.name)}</div><div class="muted small">${esc(b.niche||'')}</div></div></div>
+      <div class="row" style="gap:4px;flex-wrap:nowrap">${as.slice(0,5).map(a=>pb(a.platform,'xs')).join('')}</div></div>
+    <div class="stats"><div><div class="l">Followers</div><b>${fmtN(fol)}</b></div><div><div class="l">Accounts</div><b>${as.length}</b></div><div><div class="l">Posted</div><b>${posted.length}</b></div><div><div class="l">Views</div><b>${fmtN(posted.reduce((s,c)=>s+views(c),0))}</b></div></div>
+    ${spark(sumPts(as))}
+    <div class="row between small"><span style="color:${g>0?'var(--good)':'var(--muted)'}">${sgn(g)} followers · 30d</span><span class="muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(cs.reduce((s,c)=>s+est(c),0))}</span></div>
+  </div>`;
+}
+function vBrand(id){
+  const b=brand(id);if(!b)return `<div class="empty">That brand doesn't exist anymore. <a href="#/accts">Back to brands</a></div>`;
+  const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
+  const fol=as.reduce((s,a)=>s+num(a.followers),0);
+  const cs=S.clips.filter(c=>ids.has(c.accountId)),posted=cs.filter(isPosted);
+  const mine=TODOS.map((t,i)=>[t,i]).filter(([t])=>ids.has(t.acct));
+  const series=as.slice(0,7).map((a,i)=>({name:`${a.handle} · ${PSHORT[a.platform]}`,short:`${PSHORT[a.platform]} ${a.handle}`,color:SERIES[i],points:acctPts(a)}));
+  if(as.length>7)series.push({name:'Other',color:SERIES[7],points:sumPts(as.slice(7))});
+  return `<div class="stack">
+  <div class="crumbs"><a href="#/accts">Brands</a><span>/</span><span>${esc(b.name)}</span></div>
+  <div class="card hero">${blogo(b,'lg')}
+    <div class="grow"><h1>${esc(b.name)}</h1><div class="muted small">${esc(b.niche||'')}${b.niche?' · ':''}${as.length} account${as.length===1?'':'s'}</div></div>
+    <div class="row"><button class="btn" onclick="editBrand('${b.id}')">Edit brand</button><button class="btn primary" onclick="editAcct()">+ Account</button></div></div>
+  <div class="grid g4">
+    ${tile('Followers',fmtN(fol),`${sgn(gain(as,7))} this week · ${sgn(gain(as,30))} in 30 days`)}
+    ${tile('Clips posted',posted.length,`${cs.length-posted.length} in progress`)}
+    ${tile('Views',fmtN(posted.reduce((s,c)=>s+views(c),0)),posted.length?`${fmtN(posted.reduce((s,c)=>s+views(c),0)/posted.length)} avg per clip`:'—')}
+    ${tile('Est. earnings',fmt$(cs.reduce((s,c)=>s+est(c),0)),'across this brand')}
+  </div>
+  <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
+    ${chartBox(series,{h:260,label:`Followers per ${b.name} account over time`})}</div>
+  <div class="sec-h"><h2>Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
+  <div class="grid g3">${as.map(acctCard).join('')}<button class="addcard" onclick="editAcct()">+ Add account to ${esc(b.name)}</button></div>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
+      ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div>
+    <div class="card" id="folbulk"><h3 style="margin-bottom:4px">Log followers</h3><div class="muted small" style="margin-bottom:10px">Weekly ritual: type each account's current count and save. It adds today's point to every graph.</div>
+      ${as.length?as.map(a=>`<div class="hookrow">${pb(a.platform,'xs')}<div class="q">${esc(a.handle)}<div class="muted small">${lastLog(a)?`Last: ${fmtN(num(a.followers))} on ${esc(lastLog(a))}`:'Never logged'}</div></div><input type="number" min="0" class="inline" style="width:120px" data-fol="${a.id}" placeholder="${esc(a.followers||'0')}"></div>`).join('')+`<div style="margin-top:10px"><button class="btn primary" onclick="logFolBulk()">Save today's counts</button></div>`:'<div class="muted small">Add accounts first.</div>'}
+    </div>
+  </div>
+  ${b.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(b.notes)}</div></div>`:''}
+  </div>`;
+}
+function logFol(aid){
+  const a=acct(aid),v=document.getElementById('fol_in').value,d=document.getElementById('fol_d').value||today();
+  if(v===''||num(v)<0){toast('Type the follower count first');return}
+  recordFollowers(a,v,d);save();render();toast(`Logged ${fmtN(num(v))} for ${a.handle}`);
+}
+function logFolBulk(){
+  let n=0;document.querySelectorAll('[data-fol]').forEach(el=>{if(el.value!==''){recordFollowers(acct(el.dataset.fol),el.value);n++}});
+  if(!n){toast('Type at least one count');return}
+  save();render();toast(`Logged ${n} account${n===1?'':'s'}`);
 }
 function acctCard(a){
   const s=acctStats(a);const w=(a.warmup||[]).length;
@@ -669,10 +912,10 @@ function vAcct(id,sec){
   const url=safeUrl(a.url);
   const body={'':acctOverview,camps:acctCampsSec,content:contentSec,review:reviewSec,res:a=>resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}[sec](a);
   return `<div class="stack">
-  <div class="crumbs"><a href="#/accts">Accounts</a><span>/</span>${sec?`<a href="#/acct/${a.id}">${esc(a.handle)}</a><span>/</span><span>${ASEC.find(([k])=>k===sec)[1]}</span>`:`<span>${esc(a.handle)}</span>`}</div>
+  <div class="crumbs"><a href="#/accts">Brands</a><span>/</span>${brand(a.brandId)?`<a href="#/brand/${a.brandId}">${esc(brand(a.brandId).name)}</a><span>/</span>`:''}${sec?`<a href="#/acct/${a.id}">${esc(a.handle)}</a><span>/</span><span>${ASEC.find(([k])=>k===sec)[1]}</span>`:`<span>${esc(a.handle)}</span>`}</div>
   <div class="card hero" style="border-top:3px solid ${PCOLOR[a.platform]}">
     ${pb(a.platform,'lg')}
-    <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${mtag(a)}<span class="chip">${esc(a.status)}</span></div>
+    <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${mtag(a)}<span class="chip">${esc(a.status)}</span>${brand(a.brandId)?`<a class="chip" href="#/brand/${a.brandId}" style="text-decoration:none">${esc(brand(a.brandId).name)}</a>`:''}</div>
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
     <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open profile ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
@@ -685,11 +928,14 @@ function acctOverview(a){
   const mine=TODOS.map((t,i)=>[t,i]).filter(([t])=>t.acct===a.id);
   const camps=acctCamps(a);
   return `<div class="grid g4">
-    ${tile('Followers',fmtN(num(a.followers)),'update weekly')}
+    ${tile('Followers',fmtN(num(a.followers)),`${sgn(gain([a],7))} this week · ${sgn(gain([a],30))} in 30 days`)}
     ${tile('Clips posted',s.posted,`${s.clips-s.posted} in progress`)}
     ${tile('Views',fmtN(s.views),s.posted?`${fmtN(s.views/s.posted)} avg per clip`:'—')}
     ${a.monetized==='Paid'&&cost?tile('Payback',Math.round(s.earned/cost*100)+'%',`${fmt$(s.earned)} of ${fmt$(cost)} earned back`):tile('Est. earnings',fmt$(s.earned),'from campaign rates')}
   </div>
+  <div class="card" id="fol"><div class="row between" style="margin-bottom:10px"><div><h3>Follower growth</h3><div class="muted small">${lastLog(a)?`Last logged ${esc(lastLog(a))}. Log weekly to see the climb.`:'Log today\'s count to start the graph.'}</div></div>
+    <div class="row nowrap"><input type="date" id="fol_d" class="inline" value="${today()}" max="${today()}" aria-label="Date"><input type="number" min="0" id="fol_in" class="inline" style="width:120px" placeholder="${esc(a.followers||'Followers')}" onkeydown="if(event.key==='Enter')logFol('${a.id}')"><button class="btn primary sm" onclick="logFol('${a.id}')">Log</button></div></div>
+    ${chartBox([{name:a.handle,color:'var(--accent)',points:acctPts(a)}],{h:220,label:`${a.handle} followers over time`})}</div>
   <div class="grid g2">
     <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do on ${esc(a.handle)}</h3><span class="chip">${mine.length}</span></div>
       ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due on this account.</div>'}</div>
@@ -769,7 +1015,7 @@ function delRes(id){if(!confirm('Remove this resource?'))return;S.resources=S.re
 function vCamps(){
   const order={Active:0,Scouting:1,Paused:2,Ended:3};
   const list=[...S.campaigns].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
-  return `<div class="stack"><div class="row between"><div><div class="crumbs" style="margin-bottom:6px"><a href="#/accts">Accounts</a><span>/</span><span>All campaigns</span></div><h1>Campaigns</h1><div class="muted small">Every campaign across your accounts. Link each one to an account so it shows on that account's dashboard. Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div></div><button class="btn primary" onclick="editCamp()">+ Campaign</button></div>
+  return `<div class="stack"><div class="row between"><div><div class="crumbs" style="margin-bottom:6px"><a href="#/accts">Dashboard</a><span>/</span><span>All campaigns</span></div><h1>Campaigns</h1><div class="muted small">Every campaign across your accounts. Link each one to an account so it shows on that account's dashboard. Score out of 5: rate ≥ $1/1K · budget ≥ 30% left · brief read · strong source moments · your platforms allowed.</div></div><button class="btn primary" onclick="editCamp()">+ Campaign</button></div>
   ${list.length?`<div class="grid g3">${list.map(k=>campCard(k)).join('')}</div>`:`<div class="empty">No campaigns yet. Add the ones you're scouting on Whop or Duzlo — or open an account and add them there.</div>`}</div>`;
 }
 function campCard(k,a){
@@ -800,7 +1046,7 @@ function vCamp(id){
   const brief=safeUrl(k.briefUrl),src=safeUrl(k.sourceUrl);
   const from=accts.length===1?accts[0]:null;
   return `<div class="stack">
-  <div class="crumbs">${from?`<a href="#/accts">Accounts</a><span>/</span><a href="#/acct/${from.id}">${esc(from.handle)}</a><span>/</span><a href="#/acct/${from.id}/camps">Campaigns</a>`:`<a href="#/camps">Campaigns</a>`}<span>/</span><span>${esc(k.name)}</span></div>
+  <div class="crumbs">${from?`<a href="#/accts">Brands</a><span>/</span><a href="#/acct/${from.id}">${esc(from.handle)}</a><span>/</span><a href="#/acct/${from.id}/camps">Campaigns</a>`:`<a href="#/camps">Campaigns</a>`}<span>/</span><span>${esc(k.name)}</span></div>
   <div class="card stack">
     <div class="row between"><div><div class="row"><h1>${esc(k.name)}</h1><span class="chip">${esc(k.status)}</span><span class="chip ${sc>=4?'g':sc>=3?'w':'b'}">Score ${sc}/5</span></div>
       <div class="muted small">${esc(k.marketplace||'')}${k.cpm?` · $${num(k.cpm).toFixed(2)} per 1K views`:''}${k.maxPerClip?` · cap $${esc(k.maxPerClip)}/clip`:''}${k.minViews?` · min ${fmtN(num(k.minViews))} views`:''}</div></div>
@@ -1059,7 +1305,7 @@ function vSettings(){
   <div class="card stack"><h3>Backup</h3>
     <div class="muted small">Your data lives in this browser only. Clearing site data or switching devices loses it — export a backup weekly, and import it on any other device.</div>
     <div class="row"><button class="btn" onclick="exportJSON()">Export backup (.json)</button><label class="btn">Import backup<input type="file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"></label><button class="btn" onclick="exportCSV()">Export clips (.csv)</button></div>
-    <div class="muted small">${S.accounts.length} accounts · ${S.campaigns.length} campaigns · ${S.clips.length} clips · ${S.resources.length} resources</div>
+    <div class="muted small">${S.brands.length} brands · ${S.accounts.length} accounts · ${S.campaigns.length} campaigns · ${S.clips.length} clips · ${S.resources.length} resources</div>
   </div>
   <div class="card stack"><h3>Danger zone</h3><div><button class="btn danger" onclick="resetAll()">Erase all data</button></div></div></div>`;
 }
@@ -1076,11 +1322,11 @@ function exportCSV(){
 function importJSON(inp){
   const f=inp.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.clips)||!Array.isArray(d.campaigns))throw 0;
-    if(!confirm('Replace everything here with this backup?'))return;S=hydrate(d);save();render();toast('Backup imported')}
+    if(!confirm('Replace everything here with this backup?'))return;LOAD_ERR=null;S=hydrate(d);save();render();toast('Backup imported')}
     catch(e){toast('That file isn\'t a Clipper backup')}};
   r.readAsText(f);
 }
-function resetAll(){if(!confirm('Erase all Clipper data in this browser? Export a backup first if you need it.'))return;S=defaults();save();render();toast('Erased')}
+function resetAll(){if(!confirm('Erase all Clipper data in this browser? Export a backup first if you need it.'))return;LOAD_ERR=null;S=defaults();save();render();toast('Erased')}
 
 /* ---------- Pomodoro sidebar ---------- */
 const PK=LS_KEY+'.pomo';
