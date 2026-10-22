@@ -230,8 +230,10 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .aline{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;border-left:2px solid var(--line);margin-left:2px}
 .aline:hover{background:var(--panel2)}
 .aline{cursor:pointer}
-.todopipe{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
-@media (max-width:900px){.todopipe{grid-template-columns:minmax(0,1fr)}}
+.charttodo{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:stretch}
+.todoside{display:flex;flex-direction:column;max-height:340px}
+.todoside .scroll{overflow-y:auto;flex:1;min-height:0}
+@media (max-width:900px){.charttodo{grid-template-columns:minmax(0,1fr)}.todoside{max-height:none}}
 .aline .h{flex:1;min-width:90px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .aline .m{font-size:12px;color:var(--muted);white-space:nowrap;min-width:84px}
 .aline .m b{color:var(--text);font-size:13px}
@@ -904,14 +906,14 @@ function vBrand(id){
   <div class="card hero">${blogo(b,'lg')}
     <div class="grow"><h1>${esc(b.name)}</h1><div class="muted small">${esc(b.niche||'')}${b.niche?' · ':''}${as.length} account${as.length===1?'':'s'}</div></div>
     <div class="row"><button class="btn" onclick="editBrand('${b.id}')">Edit brand</button><button class="btn primary" onclick="editAcct()">+ Account</button></div></div>
-  <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
+  <div class="charttodo">
+    <div class="card" style="min-width:0"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
     ${chartBox(series,{h:170,label:`Followers per ${b.name} account over time`})}</div>
-  ${brandOps(b,as,cs)}
-  <div class="todopipe">
-    <div class="card"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
-      ${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div>
-    ${pipelineCard(b,cs)}
+    <div class="card todoside"><div class="row between" style="margin-bottom:6px"><h3>To-do for ${esc(b.name)}</h3><span class="chip">${mine.length}</span></div>
+      <div class="scroll">${mine.length?mine.map(([t,i])=>todoRow(t,i)).join(''):'<div class="muted small" style="padding:10px 0">Nothing due for this brand.</div>'}</div></div>
   </div>
+  ${brandOps(b,as,cs)}
+  ${pipelineCard(b,cs)}
   <div class="dash">
     <div class="stack">
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
