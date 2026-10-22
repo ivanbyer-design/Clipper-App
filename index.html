@@ -222,6 +222,18 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .wkbars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
 .wkbars i{display:block;width:100%;max-width:18px;background:var(--accent);border-radius:4px 4px 0 0}
 .wkbars span{font-size:10px;color:var(--muted);line-height:1}
+.bgroup{display:flex;flex-direction:column}
+.bgroup>.acard{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.bsub-h{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-top:0;padding:4px 8px}
+.bsub{background:var(--panel);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);padding:4px 10px 10px 22px}
+.bgroup .bsub-h:last-child{border-radius:0 0 var(--radius) var(--radius)}
+.aline{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;border-left:2px solid var(--line);margin-left:2px}
+.aline:hover{background:var(--panel2)}
+.aline .h{flex:1;min-width:90px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aline .m{font-size:12px;color:var(--muted);white-space:nowrap;min-width:84px}
+.aline .m b{color:var(--text);font-size:13px}
+.aline.add{background:none;border:0;border-left:2px dashed var(--line);color:var(--muted);font:600 13px Inter;cursor:pointer;width:100%;text-align:left}
+@media (max-width:700px){.aline .m:not(:nth-last-child(2)){display:none}}
 /* brands */
 .brands{display:flex;flex-direction:column;gap:12px}
 .acard.brow{display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(250px,1.5fr) minmax(170px,1fr);align-items:center;gap:20px}
@@ -590,8 +602,8 @@ const ACCT_FIELDS=[
   {k:'warmup',label:'Warm-up checklist',type:'multi',options:WARMUP},
   {k:'notes',label:'Notes (login email, bio text, etc. — no passwords)',type:'textarea'},
 ];
-function editAcct(id){
-  const ctxB=R.v==='brand'?R.id:R.v==='acct'&&acct(R.id)?acct(R.id).brandId:'';
+function editAcct(id,inBrand){
+  const ctxB=inBrand?inBrand:R.v==='brand'?R.id:R.v==='acct'&&acct(R.id)?acct(R.id).brandId:'';
   const a=id?S.accounts.find(x=>x.id===id):{id:uid(),platform:PLATFORMS[0],monetized:'Unpaid',status:'Warming up',created:today(),niche:(brand(ctxB)||{}).niche||S.settings.niche,warmup:[],fhist:[],brandId:ctxB||''};
   const before=id?String(a.followers??''):'';
   openForm(id?'Edit account':'New account',ACCT_FIELDS,a,o=>{if(!o.handle)o.handle='@new';if(o.handle[0]!=='@')o.handle='@'+o.handle;
@@ -784,7 +796,7 @@ function vAccts(){
   </div>
   <div class="dash">
     <div class="stack">
-      <div class="brands">${S.brands.map(brandCard).join('')}<button class="addcard slim" onclick="editBrand()">+ New brand</button></div>
+      <div class="brands">${S.brands.map(brandGroup).join('')}<button class="addcard slim" onclick="editBrand()">+ New brand</button></div>
       ${unb.length?`<div class="sec-h"><h2>Accounts without a brand</h2><span class="muted small">Edit an account to put it under a brand</span></div><div class="grid g3">${unb.map(acctCard).join('')}</div>`:''}
     </div>
     <aside class="card"><div class="row between" style="margin-bottom:6px"><h3>Today</h3><span class="chip">${TODOS.length}</span></div>
@@ -798,6 +810,22 @@ function vAccts(){
     <div class="muted">1. Create a brand (like Edge Clips). 2. Add its TikTok, YouTube, Instagram and X accounts — tag pre-monetized ones as Paid. 3. Log follower counts weekly to watch them climb. 4. Open an account to run its campaigns, content and review.</div>
     <div class="row"><button class="btn primary" onclick="editBrand()">Create first brand</button><a class="btn" href="#/play">Read the playbook</a></div></div>`:''}
   </div>`;
+}
+let BCOLL={};try{BCOLL=JSON.parse(localStorage.getItem(LS_KEY+'.bcoll')||'{}')}catch(e){}
+function toggleBrand(id,ev){ev.stopPropagation();BCOLL[id]=!BCOLL[id];try{localStorage.setItem(LS_KEY+'.bcoll',JSON.stringify(BCOLL))}catch(e){}render()}
+/* a brand with its social accounts listed underneath */
+function brandGroup(b){
+  const as=brandAccts(b.id),open=!BCOLL[b.id];
+  return `<div class="bgroup">${brandCard(b)}
+    <div class="bsub-h"><button class="btn sm ghost" onclick="toggleBrand('${b.id}',event)" aria-expanded="${open}">${open?'▾':'▸'} ${as.length} account${as.length===1?'':'s'}</button>${open?`<button class="btn sm ghost" onclick="go('brand','${b.id}')">Open brand ›</button>`:''}</div>
+    ${open?`<div class="bsub">${as.map(acctLine).join('')}<button class="aline add" onclick="editAcct(null,'${b.id}')">+ Add account to ${esc(b.name)}</button></div>`:''}
+  </div>`;
+}
+function acctLine(a){
+  const s=acctStats(a),due=TODOS.filter(t=>t.acct===a.id).length;
+  return `<a class="aline" href="#/acct/${a.id}">${pb(a.platform,'xs')}<span class="h">${esc(a.handle)}</span>${mtag(a)}
+    <span class="m"><b>${fmtN(num(a.followers))}</b> followers</span><span class="m"><b>${s.posted}</b> posted</span><span class="m"><b>${fmtN(s.views)}</b> views</span>
+    <span class="m" style="min-width:64px;text-align:right">${due?`<b style="color:var(--warn)">${due} to-do</b>`:'<span class="muted">—</span>'}</span><span class="muted">›</span></a>`;
 }
 function brandCard(b){
   const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
