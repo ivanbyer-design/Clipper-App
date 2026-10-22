@@ -228,6 +228,10 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .ctable table{font-size:12px;margin-top:6px}
 .spark{width:100%;height:42px;display:block}
 .spark-empty{height:42px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:8px}
+.wkbars{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;height:46px;margin-top:8px;align-items:end}
+.wkbars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
+.wkbars i{display:block;width:100%;max-width:18px;background:var(--accent);border-radius:4px 4px 0 0}
+.wkbars span{font-size:10px;color:var(--muted);line-height:1}
 /* brands */
 .brands{display:flex;flex-direction:column;gap:12px}
 .acard.brow{display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(250px,1.5fr) minmax(170px,1fr);align-items:center;gap:20px}
@@ -853,6 +857,45 @@ function brandCard(b){
     <div>${spark(sumPts(as))}<div class="row between small" style="margin-top:6px"><span style="color:${g>0?'var(--good)':'var(--muted)'}">${sgn(g)} followers · 30d</span><span class="muted">${due?`<b style="color:var(--warn)">${due} to-do</b> · `:''}${fmt$(cs.reduce((s,c)=>s+est(c),0))}</span></div></div>
   </div>`;
 }
+/* brand-level business view: output, queue, money, campaigns, pipeline */
+function brandCamps(as){const ids=new Set(as.map(a=>a.id));return S.campaigns.filter(k=>k.accountIds.some(x=>ids.has(x))||S.clips.some(c=>c.campaignId===k.id&&ids.has(c.accountId)))}
+function brandOps(b,as,cs){
+  const dt=num(S.settings.dailyTarget),wkT=dt*7*Math.max(1,as.filter(a=>a.status==='Active').length);
+  const wk=cs.filter(c=>isPosted(c)&&daysAgo(c.postedAt)<7).length;
+  const ready=cs.filter(c=>c.stage==='Ready').length,inEdit=cs.filter(c=>['Idea','Editing'].includes(c.stage)).length;
+  const paid=cs.filter(c=>c.stage==='Paid').reduce((s,c)=>s+est(c),0);
+  const pend=cs.filter(c=>['Posted','Submitted','Approved'].includes(c.stage)).reduce((s,c)=>s+est(c),0);
+  const camps=brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3};
+  const active=camps.filter(k=>k.status==='Active');
+  const low=active.filter(k=>k.budgetLeft!==''&&k.budgetLeft!=null).sort((x,y)=>num(x.budgetLeft)-num(y.budgetLeft))[0];
+  const ids=new Set(as.map(a=>a.id));
+  const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);const k=iso(d);return {k,l:d.toLocaleDateString(undefined,{weekday:'narrow'}),n:cs.filter(c=>isPosted(c)&&c.postedAt===k).length}});
+  const dmax=Math.max(dt*Math.max(1,as.length),...days.map(d=>d.n),1);
+  return `<div class="grid g4">
+    <div class="card tile"><div class="k">Output · last 7 days</div><div class="v">${wk} <span class="muted" style="font-size:16px">/ ${wkT}</span></div>
+      <div class="wkbars">${days.map(d=>`<div title="${esc(d.k)}: ${d.n} posted"><i style="height:${Math.max(3,Math.round(d.n/dmax*30))}px;${d.n?'':'background:var(--line)'}"></i><span>${d.l}</span></div>`).join('')}</div></div>
+    ${tile('Ready to post',ready,ready<dt*Math.max(1,as.length)?`<span style="color:var(--warn)">Under a day of posts</span> · ${inEdit} in edit`:`≈ ${(ready/Math.max(1,dt*as.length)).toFixed(1)} days queued · ${inEdit} in edit`)}
+    ${tile('Money',fmt$(paid),`paid · <b style="color:var(--text)">${fmt$(pend)}</b> pending`)}
+    ${tile('Campaigns',`${active.length} active`,low?`Lowest budget: ${esc(low.name)} ${num(low.budgetLeft)}%`:`${camps.filter(k=>k.status==='Scouting').length} scouting`)}
+  </div>`;
+}
+function brandPanels(b,as,cs){
+  const camps=brandCamps(as),order={Active:0,Scouting:1,Paused:2,Ended:3},ids=new Set(as.map(a=>a.id));
+  return `<div class="card"><div class="row between" style="margin-bottom:8px"><div><h3>Campaigns</h3><div class="muted small">Every campaign running on ${esc(b.name)}'s accounts.</div></div><button class="btn sm primary" onclick="editCamp()">+ Campaign</button></div>
+    ${camps.length?`<div class="tw"><table><thead><tr><th>Campaign</th><th>Status</th><th class="num">Rate</th><th>Budget left</th><th>Accounts</th><th class="num">Ready</th><th class="num">Live</th><th class="num">Est. $</th><th>Last submit</th></tr></thead><tbody>
+    ${[...camps].sort((x,y)=>(order[x.status]??9)-(order[y.status]??9)).map(k=>{const kc=cs.filter(c=>c.campaignId===k.id);const bl=k.budgetLeft===''||k.budgetLeft==null?null:num(k.budgetLeft);
+      const ls=kc.map(c=>c.submittedAt).filter(Boolean).sort().pop();const stc={Active:'a',Scouting:'',Paused:'w',Ended:'b'}[k.status]||'';
+      return `<tr class="click" onclick="go('camp','${k.id}')"><td><b>${esc(k.name)}</b></td><td><span class="chip ${stc}">${esc(k.status)}</span></td><td class="num">${k.cpm?'$'+num(k.cpm).toFixed(2):'—'}</td>
+      <td style="min-width:110px">${bl==null?'—':`<div class="bar" title="${bl}%"><i style="width:${Math.min(100,bl)}%;${bl<20?'background:var(--bad)':''}"></i></div>`}</td>
+      <td><span class="row" style="gap:3px;flex-wrap:nowrap">${k.accountIds.map(acct).filter(a=>a&&ids.has(a.id)).map(a=>pb(a.platform,'xs')).join('')||'—'}</span></td>
+      <td class="num">${kc.filter(c=>c.stage==='Ready').length}</td><td class="num">${kc.filter(c=>['Posted','Submitted','Approved'].includes(c.stage)).length}</td>
+      <td class="num">${fmt$(kc.reduce((s,c)=>s+est(c),0))}</td><td>${ls?`${daysAgo(ls)}d ago`:'<span class="muted">never</span>'}</td></tr>`}).join('')}
+    </tbody></table></div>`:`<div class="empty">No campaigns yet. Add one and link it to this brand's accounts.</div>`}
+  </div>
+  <div class="card"><div class="row between" style="margin-bottom:8px"><div><h3>Production pipeline</h3><div class="muted small">Every clip across ${esc(b.name)}, idea to payout. Use ‹ › to move a clip, click it to edit.</div></div>
+    <div class="row"><button class="btn sm" onclick="bulkAdd()">Bulk add</button><button class="btn sm primary" onclick="editClip()">+ Clip</button></div></div>
+    ${board(cs)}</div>`;
+}
 function vBrand(id){
   const b=brand(id);if(!b)return `<div class="empty">That brand doesn't exist anymore. <a href="#/accts">Back to brands</a></div>`;
   const as=brandAccts(b.id),ids=new Set(as.map(a=>a.id));
@@ -868,12 +911,7 @@ function vBrand(id){
     <div class="row"><button class="btn" onclick="editBrand('${b.id}')">Edit brand</button><button class="btn primary" onclick="editAcct()">+ Account</button></div></div>
   <div class="card"><div style="margin-bottom:10px"><h3>Follower growth by account</h3><div class="muted small">Hover the chart for exact counts on each log date.</div></div>
     ${chartBox(series,{h:170,label:`Followers per ${b.name} account over time`})}</div>
-  <div class="grid g4">
-    ${tile('Followers',fmtN(fol),`${sgn(gain(as,7))} this week · ${sgn(gain(as,30))} in 30 days`)}
-    ${tile('Clips posted',posted.length,`${cs.length-posted.length} in progress`)}
-    ${tile('Views',fmtN(posted.reduce((s,c)=>s+views(c),0)),posted.length?`${fmtN(posted.reduce((s,c)=>s+views(c),0)/posted.length)} avg per clip`:'—')}
-    ${tile('Est. earnings',fmt$(cs.reduce((s,c)=>s+est(c),0)),'across this brand')}
-  </div>
+  ${brandOps(b,as,cs)}
   <div class="dash">
     <div class="stack">
       <div class="row between"><h2 style="font-size:18px">Account hubs</h2><span class="muted small">Open one for its campaigns, content, review and resources</span></div>
@@ -887,6 +925,7 @@ function vBrand(id){
     </div>
     </aside>
   </div>
+  ${brandPanels(b,as,cs)}
   ${b.notes?`<div class="card"><h3 style="margin-bottom:6px">Notes</h3><div class="muted small" style="white-space:pre-wrap">${esc(b.notes)}</div></div>`:''}
   </div>`;
 }
