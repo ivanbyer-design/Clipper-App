@@ -14,12 +14,12 @@
   --accent:#c6ff3d;--accent-ink:#0d0f12;--accent-soft:rgba(198,255,61,.12);
   --warn:#ffb648;--bad:#ff6b6b;--good:#3ddc97;--gold:#ffcf3d;--gold-soft:rgba(255,207,61,.14);--radius:12px;
   --shadow:0 10px 40px rgba(0,0,0,.45);
-  --tt:#25f4ee;--yt:#ff3b30;--ig:#e1306c;--x:#e7e9ea;
+  --tt:#25f4ee;--yt:#ff3b30;--ig:#e1306c;--x:#e7e9ea;--hdr:#060708;
 }
 @media (prefers-color-scheme: light){
   :root{--bg:#f3f4f0;--panel:#ffffff;--panel2:#eef0ea;--line:#dcdfd6;--text:#15171b;--muted:#5d6470;
   --accent:#4f7300;--accent-ink:#ffffff;--accent-soft:rgba(79,115,0,.10);--warn:#a86400;--bad:#c62828;--good:#16804f;
-  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;--x:#0f1419;}
+  --gold:#8a6400;--gold-soft:rgba(138,100,0,.10);--shadow:0 10px 40px rgba(0,0,0,.12);--tt:#0a9a96;--x:#0f1419;--hdr:#15171b;}
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -31,16 +31,48 @@ h2{font-size:22px}
 h3{font-size:16px}
 .muted{color:var(--muted)}
 .small{font-size:13px}
-header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top{max-width:1240px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.logo{display:flex;align-items:center;gap:8px;font-family:"Space Grotesk";font-weight:700;font-size:20px;color:var(--text);text-decoration:none}
-.logo .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:15px}
-.top .spacer{flex:1}
-.tools{display:flex;gap:2px;margin-left:12px;overflow-x:auto;scrollbar-width:none;min-width:0}
-.tools a{color:var(--muted);font:600 14px Inter;padding:6px 10px;text-decoration:none;border-radius:8px;white-space:nowrap}
-.tools a:hover{color:var(--text)}
-.tools a.on{color:var(--text);background:var(--panel2)}
-main{max-width:1240px;margin:0 auto;padding:20px 16px 80px}
+/* app shell: dark top bar + left sidebar (same layout as the trading journal) */
+.hdr{position:sticky;top:0;z-index:30;height:58px;background:var(--hdr);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px 0 10px}
+.hdr .spacer{flex:1}
+.burger{width:38px;height:38px;border-radius:8px;border:0;background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center}
+.burger:hover{background:rgba(255,255,255,.08)}
+.logo{display:flex;align-items:center;gap:9px;font-family:"Space Grotesk";font-weight:700;font-size:20px;color:#fff;text-decoration:none}
+.logo .mark{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:15px}
+.hbtn{height:36px;padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font:600 13px Inter;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.hbtn:hover{background:rgba(255,255,255,.14)}
+#todayLbl{color:rgba(255,255,255,.6);font-size:13px}
+.app{display:flex;align-items:flex-start;background:var(--hdr);min-height:calc(100vh - 58px)}
+.side{position:sticky;top:58px;height:calc(100vh - 58px);width:236px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:18px 14px 14px;overflow-y:auto;border-top-left-radius:14px;display:flex;flex-direction:column;transition:margin .25s ease}
+body.sb-collapsed .side{margin-left:-236px}
+main{flex:1;min-width:0;background:var(--bg);min-height:calc(100vh - 58px);padding:22px 26px 80px}
+body.sb-collapsed main{border-top-left-radius:14px}
+main>*{max-width:1440px;margin-left:auto;margin-right:auto}
+.sb-add{position:relative;margin-bottom:16px}
+.sb-add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:9px;border:0;background:var(--accent);color:var(--accent-ink);font:600 14px Inter;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 30%,transparent)}
+.sb-add-btn:hover{filter:brightness(1.08)}
+.dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);z-index:35;padding:6px}
+.sb-add.open .dd-menu{display:block}
+.dd-opt{display:block;width:100%;text-align:left;padding:9px 11px;border-radius:7px;border:0;background:none;color:var(--text);font:500 13px Inter;cursor:pointer}
+.dd-opt small{display:block;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+.dd-opt:hover{background:var(--panel2)}
+.nav-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:2px;border-radius:9px;color:var(--text);font:500 14px Inter;text-decoration:none;cursor:pointer}
+.nav-item svg{color:var(--muted);flex:none}
+.nav-item:hover{background:var(--panel2)}
+.nav-item.active{background:var(--accent-soft);color:var(--accent)}
+.nav-item.active svg{color:var(--accent)}
+.nav-item .h{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-item .c{font-size:11px;padding:1px 7px;border-radius:99px;background:var(--panel2);color:var(--muted);font-weight:600}
+.nav-item .c.w{color:var(--warn)}
+.nav-item .star{color:var(--gold);font-size:12px}
+.nav-acct{gap:10px}
+.nav-acct.open{font-weight:600}
+.nav-sub{margin:0 0 8px 21px;padding-left:8px;border-left:1px solid var(--line)}
+.nav-sub .nav-item{padding:7px 10px;font-size:13px;gap:10px}
+.nav-sep{height:1px;background:var(--line);margin:12px 4px}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.side-foot .btn{justify-content:center}
+.side-bd{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:44;backdrop-filter:blur(2px)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .nowrap{flex-wrap:nowrap}
 .between{justify-content:space-between}
@@ -169,13 +201,6 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .insight:first-child{border-top:0}
 .insight .i{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;background:var(--accent-soft);color:var(--accent)}
 .insight .i.w{background:var(--gold-soft);color:var(--warn)}
-/* account hub tabs */
-.atabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
-.atabs::-webkit-scrollbar{display:none}
-.atabs a{color:var(--muted);font:600 14px Inter;padding:10px 12px;border-bottom:2px solid transparent;text-decoration:none;white-space:nowrap;margin-bottom:-1px}
-.atabs a:hover{color:var(--text)}
-.atabs a.on{color:var(--text);border-bottom-color:var(--accent)}
-.atabs .c{font-size:11px;margin-left:6px;padding:1px 6px;border-radius:99px;background:var(--panel2);color:var(--muted)}
 .flash{animation:flash 1.8s ease-out 1;border-radius:10px}
 @keyframes flash{0%,45%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
 /* pomodoro drawer */
@@ -192,35 +217,40 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--panel2)}
 .tomatoes i{width:14px;height:14px;border-radius:50%;background:var(--panel2);border:1px solid var(--line)}
 .tomatoes i.on{background:var(--bad);border-color:var(--bad)}
 .pomo-btn{font-variant-numeric:tabular-nums}
-.pomo-btn.run{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.pomo-btn.run{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 @media (min-width:1260px){body.pomo-open{padding-right:340px}}
 @media (max-width:900px){
   .dash{grid-template-columns:minmax(0,1fr)}
   .dash aside{position:static}
 }
+@media (max-width:768px){
+  .side{position:fixed;top:0;left:0;bottom:0;height:100vh;z-index:45;border-radius:0;transform:translateX(-100%);transition:transform .2s ease;margin-left:0!important}
+  .side.open{transform:none}
+  .side-bd.open{display:block}
+  main{padding:16px 16px 80px;border-radius:0!important}
+  #todayLbl{display:none}
+  .hdr{padding:0 10px 0 6px}
+}
 @media (max-width:600px){
   .tile .v{font-size:22px}
-  .top .hide-m{display:none}
-  .tools{margin-left:0}
-  .tools a{padding:6px 7px;font-size:13px}
-  .logo .word{display:none}
   .paste{grid-template-columns:1fr}
   .stats b{font-size:15px}
 }
 </style>
 </head>
 <body>
-<header>
-  <div class="top">
-    <a class="logo" href="#/accts"><span class="mark">✂</span><span class="word">Clipper</span></a>
-    <nav class="tools" id="nav"></nav>
-    <div class="spacer"></div>
-    <span class="muted small hide-m" id="todayLbl"></span>
-    <button class="btn sm pomo-btn" id="pomoBtn" onclick="togglePomo()" aria-label="Focus timer">⏱ Focus</button>
-    <button class="btn primary sm" onclick="editClip()">+ Clip</button>
-  </div>
+<div class="side-bd" id="sideBd" onclick="closeSide()"></div>
+<header class="hdr">
+  <button class="burger" onclick="toggleSide()" aria-label="Toggle menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="logo" href="#/accts"><span class="mark">✂</span>Clipper</a>
+  <div class="spacer"></div>
+  <span id="todayLbl"></span>
+  <button class="hbtn pomo-btn" id="pomoBtn" onclick="togglePomo()" aria-label="Focus timer">⏱ Focus</button>
 </header>
-<main id="view"></main>
+<div class="app">
+  <aside class="side" id="side" aria-label="Pages"></aside>
+  <main id="view"></main>
+</div>
 <div class="toast" id="toast"></div>
 <aside class="drawer" id="pomo" aria-label="Focus timer"></aside>
 
@@ -316,13 +346,9 @@ async function copy(text){try{await navigator.clipboard.writeText(text);toast('C
 
 /* ---------- routing ---------- */
 const VIEWS={accts:()=>vAccts(),acct:()=>vAcct(R.id,R.sec),camps:()=>vCamps(),camp:()=>vCamp(R.id),caps:()=>vCaps(),play:()=>vPlay(),settings:()=>vSettings()};
-const NAV=[['accts','Accounts',['accts','acct','camps','camp']],['caps','Captions',['caps']],['play','Playbook',['play']],['settings','Settings',['settings']]];
 function parseHash(){const [v,id,sec]=location.hash.replace(/^#\/?/,'').split('/');R={v:VIEWS[v]?v:'accts',id:id||'',sec:sec||''}}
 function go(v,id,sec){const h='#/'+[v,id,sec].filter(Boolean).join('/');if(location.hash===h)render();else location.hash=h}
-window.addEventListener('hashchange',()=>{parseHash();window.scrollTo(0,0);render()});
-function renderNav(){
-  document.getElementById('nav').innerHTML=NAV.map(([k,l,vs])=>`<a class="${vs.includes(R.v)?'on':''}" href="#/${k}">${l}</a>`).join('');
-}
+window.addEventListener('hashchange',()=>{parseHash();closeSide();window.scrollTo(0,0);render()});
 let TODOS=[];
 let FOCUS=null;
 function render(){
@@ -330,7 +356,7 @@ function render(){
   const a=R.v==='acct'&&acct(R.id);
   if(a&&CF.acct!==a.id){CF.acct=a.id;CF.camp=''}
   MED=a?median(S.clips.filter(c=>c.accountId===a.id&&isPosted(c)).map(views).filter(Boolean)):medViews();
-  renderNav();
+  renderSide();
   document.getElementById('todayLbl').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
   document.getElementById('view').innerHTML=VIEWS[R.v]();
   if(R.v==='caps')capPreview();
@@ -353,6 +379,71 @@ function applyFocus(){
       if(inp){inp.scrollIntoView({block:'center'});inp.focus();inp.parentElement.classList.add('flash')}},el?500:0);
   });
 }
+
+/* ---------- left sidebar ---------- */
+const svg=(d,fill)=>`<svg width="18" height="18" viewBox="0 0 24 24" ${fill?'fill="currentColor"':'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'} aria-hidden="true">${d}</svg>`;
+const IC={
+  dash:svg('<rect x="3" y="3" width="8" height="10" rx="1.5"/><rect x="13" y="3" width="8" height="6" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/><rect x="13" y="11" width="8" height="10" rx="1.5"/>',1),
+  '':svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  camps:svg('<path d="M4 21V4"/><path d="M4 4h12l-2 4 2 4H4"/>'),
+  content:svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>'),
+  review:svg('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  res:svg('<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>'),
+  allcamps:svg('<path d="M3 7h18M3 12h18M3 17h12"/>'),
+  caps:svg('<path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l4 4M21 15l-4 4"/>'),
+  play:svg('<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"/><path d="M4 19.5A2 2 0 0 1 6 18h13"/><path d="M9 7h6M9 11h4"/>'),
+  settings:svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
+};
+function sideCtx(){
+  if(R.v==='acct'&&acct(R.id))return {a:acct(R.id),sec:ASEC.some(([k])=>k===R.sec)?R.sec:''};
+  if(R.v==='camp'){const k=camp(R.id);const aid=k&&k.accountIds.find(acct);if(aid)return {a:acct(aid),sec:'camps'}}
+  return {a:null,sec:null};
+}
+function renderSide(){
+  const {a,sec}=sideCtx();
+  const item=(href,icon,label,on,extra='')=>`<a class="nav-item ${on?'active':''}" href="${href}">${icon}<span class="h">${label}</span>${extra}</a>`;
+  const accts=[...S.accounts].sort((x,y)=>(y.monetized==='Paid')-(x.monetized==='Paid')||PLATFORMS.indexOf(x.platform)-PLATFORMS.indexOf(y.platform));
+  const cnt=x=>({camps:acctCamps(x).length,content:S.clips.filter(c=>c.accountId===x.id).length,res:S.resources.filter(r=>r.accountId===x.id&&!r.campaignId).length});
+  document.getElementById('side').innerHTML=`
+  <div class="sb-add" id="sbAdd">
+    <button class="sb-add-btn" onclick="toggleAdd(event)">${svg('<path d="M12 5v14M5 12h14"/>')}Add</button>
+    <div class="dd-menu">
+      <button class="dd-opt" onclick="addPick(()=>editClip())">New clip<small>One moment to edit and post</small></button>
+      <button class="dd-opt" onclick="addPick(bulkAdd)">Bulk add moments<small>Paste timestamps from Opus Clip</small></button>
+      <button class="dd-opt" onclick="addPick(()=>editCamp(null,${a?`{accountIds:['${a.id}']}`:'null'}))">New campaign<small>${a?`Linked to ${esc(a.handle)}`:'From Whop, Duzlo or anywhere'}</small></button>
+      <button class="dd-opt" onclick="addPick(()=>editAcct())">New account<small>TikTok, YouTube, Instagram or X</small></button>
+    </div>
+  </div>
+  <nav>
+    ${item('#/accts',IC.dash,'Dashboard',R.v==='accts',TODOS.length?`<span class="c">${TODOS.length}</span>`:'')}
+    <div class="nav-lbl">Accounts</div>
+    ${accts.length?accts.map(x=>{const open=a&&a.id===x.id;const c=cnt(x);const due=TODOS.filter(t=>t.acct===x.id).length;
+      return `<a class="nav-item nav-acct ${open?'open':''}" href="#/acct/${x.id}">${pb(x.platform,'xs')}<span class="h">${esc(x.handle)}</span>${x.monetized==='Paid'?'<span class="star" title="Paid">★</span>':''}${due&&!open?`<span class="c w">${due}</span>`:''}</a>
+      ${open?`<div class="nav-sub">${ASEC.map(([k,l])=>item(`#/acct/${x.id}${k?'/'+k:''}`,IC[k],l,sec===k,c[k]!=null?`<span class="c">${c[k]}</span>`:'')).join('')}</div>`:''}`}).join('')
+    :`<a class="nav-item" href="javascript:void 0" onclick="editAcct()"><span class="h muted">+ Add your first account</span></a>`}
+    <div class="nav-sep"></div>
+    ${item('#/camps',IC.allcamps,'All campaigns',R.v==='camps')}
+    ${item('#/caps',IC.caps,'Captions',R.v==='caps')}
+    ${item('#/play',IC.play,'Playbook',R.v==='play')}
+    ${item('#/settings',IC.settings,'Settings',R.v==='settings')}
+  </nav>
+  <div class="side-foot">
+    <div class="nav-lbl" style="margin:0 2px 8px">Backup</div>
+    <button class="btn sm" onclick="exportJSON()">↓ Export backup</button>
+    <label class="btn sm">↑ Import backup<input type="file" accept=".json,application/json" style="display:none" onchange="importJSON(this)"></label>
+  </div>`;
+}
+function toggleAdd(ev){ev.stopPropagation();document.getElementById('sbAdd').classList.toggle('open')}
+function addPick(fn){document.getElementById('sbAdd').classList.remove('open');closeSide();fn()}
+document.addEventListener('click',()=>{const m=document.getElementById('sbAdd');if(m)m.classList.remove('open')});
+const mobile=()=>window.innerWidth<=768;
+function toggleSide(){
+  if(!mobile()){const c=document.body.classList.toggle('sb-collapsed');try{localStorage.setItem(LS_KEY+'.sb',c?'1':'')}catch(e){}return}
+  const open=!document.getElementById('side').classList.contains('open');
+  document.getElementById('side').classList.toggle('open',open);document.getElementById('sideBd').classList.toggle('open',open);
+}
+function closeSide(){document.getElementById('side').classList.remove('open');document.getElementById('sideBd').classList.remove('open')}
+try{if(localStorage.getItem(LS_KEY+'.sb'))document.body.classList.add('sb-collapsed')}catch(e){}
 
 /* ---------- generic form modal ---------- */
 let FORM=null;
@@ -576,17 +667,16 @@ function vAcct(id,sec){
   const a=acct(id);if(!a)return `<div class="empty">That account doesn't exist anymore. <a href="#/accts">Back to accounts</a></div>`;
   if(!ASEC.some(([k])=>k===sec))sec='';
   const url=safeUrl(a.url);
-  const cnt={camps:acctCamps(a).length,content:S.clips.filter(c=>c.accountId===a.id).length,res:S.resources.filter(r=>r.accountId===a.id&&!r.campaignId).length};
   const body={'':acctOverview,camps:acctCampsSec,content:contentSec,review:reviewSec,res:a=>resBox('acct',a.id,'Resources','Source videos, Drive folders, inspo clips, the brief — paste a link and it embeds right here.')}[sec](a);
   return `<div class="stack">
-  <div class="crumbs"><a href="#/accts">Accounts</a><span>/</span><span>${esc(a.handle)}</span></div>
+  <div class="crumbs"><a href="#/accts">Accounts</a><span>/</span>${sec?`<a href="#/acct/${a.id}">${esc(a.handle)}</a><span>/</span><span>${ASEC.find(([k])=>k===sec)[1]}</span>`:`<span>${esc(a.handle)}</span>`}</div>
   <div class="card hero" style="border-top:3px solid ${PCOLOR[a.platform]}">
     ${pb(a.platform,'lg')}
     <div class="grow"><div class="row"><h1>${esc(a.handle)}</h1>${mtag(a)}<span class="chip">${esc(a.status)}</span></div>
       <div class="muted small">${esc(a.platform)}${a.niche?' · '+esc(a.niche):''}${a.created?' · since '+esc(a.created):''}</div></div>
     <div class="row">${url?`<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Open profile ↗</a>`:''}<button class="btn" onclick="editAcct('${a.id}')">Edit</button><button class="btn primary" onclick="editClip()">+ Clip</button></div>
   </div>
-  <nav class="atabs">${ASEC.map(([k,l])=>`<a class="${k===sec?'on':''}" href="#/acct/${a.id}${k?'/'+k:''}">${l}${cnt[k]!=null?`<span class="c">${cnt[k]}</span>`:''}</a>`).join('')}</nav>
+  ${sec?`<h2 style="margin-top:6px">${ASEC.find(([k])=>k===sec)[1]}</h2>`:''}
   ${body}
   </div>`;
 }
